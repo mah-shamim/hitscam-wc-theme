@@ -14,13 +14,19 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'hitscam-bootstrap', $u . 'vendor/bootstrap/bootstrap.bundle.min.js', array(), '5.3.3', true );
 	wp_enqueue_script( 'hitscam-owl', $u . 'vendor/owl/owl.carousel.min.js', array( 'jquery' ), '2.3.4', true );
 	wp_enqueue_script( 'hitscam-theme', $u . 'js/theme.js', array( 'jquery', 'hitscam-bootstrap', 'hitscam-owl' ), HITSCAM_VERSION, true );
+	wp_enqueue_script( 'hitscam-shop', $u . 'js/shop.js', array( 'hitscam-theme' ), HITSCAM_VERSION, true );
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		wp_enqueue_script( 'hitscam-pdp', $u . 'js/pdp.js', array( 'hitscam-shop' ), HITSCAM_VERSION, true );
+	}
 	wp_localize_script( 'hitscam-theme', 'HCT', array(
+		'freeShip' => (float) hitscam_opt( 'freeship', 5000 ),
 		'ajax'     => admin_url( 'admin-ajax.php' ),
 		'nonce'    => wp_create_nonce( 'hitscam' ),
 		'rest'     => esc_url_raw( rest_url( 'hitscam-theme/v1/' ) ),
 		'shop'     => hitscam_is_wc() ? wc_get_page_permalink( 'shop' ) : home_url( '/' ),
 		'cmpUrl'   => ( $ids = (array) get_option( 'hitscam_page_ids', array() ) ) && ! empty( $ids['compare'] ) ? get_permalink( $ids['compare'] ) : '',
 		'cartUrl'  => hitscam_is_wc() ? wc_get_cart_url() : '',
+		'checkout' => hitscam_is_wc() ? wc_get_checkout_url() : '',
 		'currency' => hitscam_is_wc() ? html_entity_decode( get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8' ) : '৳',
 		'wa'       => preg_replace( '/\D/', '', (string) hitscam_opt( 'whatsapp', '8801614747054' ) ),
 		'i18n'     => array(

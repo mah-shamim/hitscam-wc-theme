@@ -42,7 +42,7 @@ $link  = fn( $slug, $label ) => ! empty( $ids[ $slug ] ) ? '<a href="' . esc_url
 
 <?php if ( $wc ) : ?>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="miniCart" aria-labelledby="miniCartTitle"><div class="offcanvas-header border-bottom"><h5 class="offcanvas-title fw-bold" id="miniCartTitle">আপনার কার্ট (<span class="cart-count"><?php echo (int) ( WC()->cart ? WC()->cart->get_cart_contents_count() : 0 ); ?></span>)</h5><button class="btn-close" data-bs-dismiss="offcanvas" aria-label="বন্ধ"></button></div>
-	<div class="offcanvas-body d-flex flex-column"><div class="fs-wrap"></div><div class="widget_shopping_cart_content flex-grow-1"><?php woocommerce_mini_cart(); ?></div></div></div>
+	<div class="offcanvas-body d-flex flex-column"><div class="fs-wrap"></div><div class="widget_shopping_cart_content flex-grow-1"><?php woocommerce_mini_cart(); ?></div><div id="hcLater"></div><div class="hc-incart-data" hidden data-ids="<?php echo esc_attr( wp_json_encode( (object) array_reduce( WC()->cart ? WC()->cart->get_cart() : array(), function ( $c, $i ) { $c[ (int) $i['product_id'] ] = ( $c[ (int) $i['product_id'] ] ?? 0 ) + (int) $i['quantity']; return $c; }, array() ) ) ); ?>"></div></div></div>
 <?php endif; ?>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="miniWish" aria-labelledby="miniWishTitle"><div class="offcanvas-header border-bottom"><h5 class="offcanvas-title fw-bold" id="miniWishTitle"><i class="bi bi-heart-fill text-brand"></i> উইশলিস্ট (<span class="wish-count">0</span>)</h5><button class="btn-close" data-bs-dismiss="offcanvas" aria-label="বন্ধ"></button></div>
 	<div class="offcanvas-body"><div id="miniWishBody"></div></div></div>

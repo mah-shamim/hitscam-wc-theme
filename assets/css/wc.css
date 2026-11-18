@@ -135,3 +135,23 @@ a.added_to_cart{display:none!important}
 #qvBody{padding-top:2.2rem}
 
 .trust-row .t-item b,.trust-row .t-item small{display:block}.trust-row .t-item small{color:var(--muted,#64748b)}
+
+/* মিনি-কার্ট হার্ডেনিং: ছবির কলাম কখনো ছোট/বড় হবে না, নাম ভাঙবে না */
+.cart-line>a{flex:0 0 62px;width:62px}
+.cart-line img{width:62px!important;height:62px!important;max-width:none!important;flex:0 0 62px;object-fit:cover}
+.cart-line>.flex-grow-1{min-width:0}
+.cart-line .fw-bold{white-space:nowrap}
+.offcanvas .fs-wrap{position:static;top:auto;margin-bottom:.8rem}
+/* অ্যাডমিন বার থাকলে ড্রয়ার তার নিচ থেকে শুরু */
+.admin-bar .offcanvas{top:32px;height:calc(100% - 32px)}
+@media(max-width:782px){.admin-bar .offcanvas{top:46px;height:calc(100% - 46px)}}
+.offcanvas-body{overflow-y:auto}
+
+/* অ্যাডমিন-বার (লগইন অবস্থায়) — স্টিকি হেডার/সাইডবার নিচে নামবে */
+.admin-bar .site-header{top:32px}
+.admin-bar .pg-sticky,.admin-bar .pi-scroll,.admin-bar .shop-filter{top:calc(var(--hdr-h,0px) + 48px)}
+@media(max-width:782px){.admin-bar .site-header{top:46px}}
+@media(max-width:600px){.admin-bar .site-header{top:0}}
+
+.pi-scroll.flow{position:static!important;max-height:none!important;overflow:visible!important;margin:0!important;padding:0!important}
+.admin-bar .pi-scroll{max-height:calc(100vh - var(--hdr-h,0px) - 64px)}

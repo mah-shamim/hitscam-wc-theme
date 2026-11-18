@@ -59,7 +59,7 @@ add_filter( 'woocommerce_cart_item_name', function ( $name, $item ) {
 }, 10, 2 );
 
 // প্রোডাক্ট পেজে বাল্ক টেবিল (সিম্পল/ভ্যারিয়েবল)
-add_action( 'woocommerce_single_product_summary', function () {
+function hitscam_bulk_box() {
 	$t = hitscam_bulk_tiers();
 	if ( ! $t ) {
 		return;
@@ -69,7 +69,7 @@ add_action( 'woocommerce_single_product_summary', function () {
 		echo '<span class="bulk-chip">' . esc_html( hitscam_bn_digits( $row[0] ) ) . '+ পিস → <b>' . esc_html( hitscam_bn_digits( rtrim( rtrim( (string) $row[1], '0' ), '.' ) ) ) . '%</b></span>';
 	}
 	echo '</div></div>';
-}, 28 );
+}
 
 /** স্টক লেবেল (লো/শেষ/আছে) */
 function hitscam_stock_html( WC_Product $p ) {

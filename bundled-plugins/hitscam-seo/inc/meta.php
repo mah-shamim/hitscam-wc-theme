@@ -23,7 +23,7 @@ function hcseo_ctx() {
 		$tpl_t = $o['term_title']; $tpl_d = $o['term_desc']; $url = get_term_link( $t ); $type = 'website';
 	} elseif ( function_exists( 'is_shop' ) && is_shop() ) {
 		$sp = (int) wc_get_page_id( 'shop' ); if ( $sp > 0 ) { $ctx['post'] = get_post( $sp ); $m = hcseo_get_meta( $sp ); }
-		$tpl_t = $o['archive_title']; $tpl_d = '%%archive_title%%'; $url = get_post_type_archive_link( 'product' ); $type = 'website';
+		$tpl_t = '%%shop_title%% %%sep%% %%sitetitle%%'; $tpl_d = 'আমাদের সব পণ্য দেখুন — %%sitetitle%%'; $url = get_post_type_archive_link( 'product' ); $type = 'website';
 	} elseif ( is_search() ) {
 		$tpl_t = $o['search_title']; $url = get_search_link(); $type = 'website';
 	} elseif ( is_404() ) {

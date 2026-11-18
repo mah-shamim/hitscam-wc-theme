@@ -137,7 +137,7 @@ function hcseo_replace( $str, $ctx = array() ) {
 		'post_date' => $p ? get_the_date( '', $p ) : '', 'post_author' => $p ? get_the_author_meta( 'display_name', $p->post_author ) : '',
 		'post_category' => $cat, 'post_tag' => $tag, 'product_price' => $price, 'currency' => function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : '',
 		'term_title' => $term ? $term->name : '', 'term_description' => $term ? wp_strip_all_tags( term_description( $term->term_id, $term->taxonomy ) ) : '',
-		'archive_title' => wp_strip_all_tags( get_the_archive_title() ), 'search_keywords' => get_search_query( false ),
+		'archive_title' => wp_strip_all_tags( get_the_archive_title() ), 'shop_title' => function_exists( 'wc_get_page_id' ) && wc_get_page_id( 'shop' ) > 0 ? get_the_title( wc_get_page_id( 'shop' ) ) : 'Shop', 'search_keywords' => get_search_query( false ),
 		'page' => $paged > 1 ? sprintf( 'পৃষ্ঠা %d', $paged ) : '', 'current_year' => gmdate( 'Y' ),
 	);
 	$map = apply_filters( 'hitscam_seo_variables', $map, $ctx );

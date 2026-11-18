@@ -46,9 +46,9 @@ if ( $cats && ! is_wp_error( $cats ) ) : ?>
 <?php endif;
 
 $rows = array(
-	array( 'ট্রেন্ডিং', array( 'limit' => 4, 'orderby' => 'popularity', 'status' => 'publish' ) ),
-	array( 'নতুন এসেছে', array( 'limit' => 4, 'orderby' => 'date', 'status' => 'publish' ) ),
-	array( 'অফার', array( 'limit' => 4, 'include' => array_slice( wc_get_product_ids_on_sale(), 0, 4 ) ?: array( 0 ), 'status' => 'publish' ) ),
+	array( 'ট্রেন্ডিং', array( 'limit' => 4, 'orderby' => 'popularity', 'status' => 'publish', 'stock_status' => 'instock', 'visibility' => 'catalog' ) ),
+	array( 'নতুন এসেছে', array( 'limit' => 4, 'orderby' => 'date', 'status' => 'publish', 'stock_status' => 'instock', 'visibility' => 'catalog' ) ),
+	array( 'অফার', array( 'limit' => 4, 'include' => array_slice( wc_get_product_ids_on_sale(), 0, 4 ) ?: array( 0 ), 'status' => 'publish', 'stock_status' => 'instock' ) ),
 );
 foreach ( $rows as $r ) :
 	$list = wc_get_products( $r[1] );
@@ -60,6 +60,7 @@ foreach ( $rows as $r ) :
 		$post    = get_post( $p->get_id() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		setup_postdata( $post );
 		$product = $p; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
+		if ( ! $p->is_visible() ) { continue; }
 		echo '<div class="col-12 col-sm-6 col-md-4 col-lg-3">';
 		wc_get_template_part( 'content', 'product' );
 		echo '</div>';

@@ -7,11 +7,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HITSCAM_VERSION', '2.1.0' );
+define( 'HITSCAM_VERSION', '2.2.0' );
 define( 'HITSCAM_DIR', get_template_directory() );
 define( 'HITSCAM_URI', get_template_directory_uri() );
 
-foreach ( array( 'setup', 'options', 'enqueue', 'plugins', 'store-setup', 'woocommerce', 'features', 'pdp', 'ajax', 'shortcodes' ) as $hitscam_inc ) {
+foreach ( array( 'setup', 'options', 'enqueue', 'plugins', 'store-setup', 'woocommerce', 'features', 'pdp', 'ajax', 'shortcodes', 'pages' ) as $hitscam_inc ) {
 	require_once HITSCAM_DIR . '/inc/' . $hitscam_inc . '.php';
 }
 unset( $hitscam_inc );

@@ -23,7 +23,7 @@ add_action( 'customize_register', function ( WP_Customize_Manager $c ) {
 /* ---------- পেজ তৈরি (থিম আপডেটেও একবার চলে) ---------- */
 function hitscam_extra_pages() {
 	$read = function ( $n ) { $p = HITSCAM_DIR . "/inc/pages/$n.html"; return file_exists( $p ) ? file_get_contents( $p ) : ''; }; // phpcs:ignore
-	return array(
+	return apply_filters( 'hitscam_extra_pages', array(
 		'shipping' => array( 'শিপিং তথ্য', $read( 'shipping' ) ),
 		'returns'  => array( 'রিটার্ন, রিফান্ড ও ওয়ারেন্টি পলিসি', $read( 'returns' ) ),
 		'terms'    => array( 'শর্তাবলী', $read( 'terms' ) ),
@@ -33,7 +33,7 @@ function hitscam_extra_pages() {
 		'dealer'   => array( 'ডিলার ও বাল্ক প্রাইস', '[hitscam_dealer]' ),
 		'warranty' => array( 'ওয়ারেন্টি চেক', '[hitscam_warranty]' ),
 		'rma'      => array( 'রিটার্ন ও রিপেয়ার অনুরোধ', '[hitscam_rma]' ),
-	);
+	) );
 }
 
 function hitscam_ensure_extra_pages() {

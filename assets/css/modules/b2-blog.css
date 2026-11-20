@@ -1,0 +1,4 @@
+.article-body table,.entry-content table{display:block;max-width:100%;overflow-x:auto}
+.article-body img{max-width:100%;height:auto}
+textarea,.comment-form input[type=text],.comment-form input[type=email],.comment-form input[type=url]{max-width:100%}.comment-form textarea{width:100%}
+body.single-post{overflow-x:clip}

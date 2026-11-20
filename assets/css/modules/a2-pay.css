@@ -1,0 +1,2 @@
+.wc_payment_methods>li>label{display:inline-block;max-width:calc(100% - 32px);vertical-align:top;line-height:1.5}
+.wc_payment_methods .payment_box [data-pay-extra]{margin-top:.5rem}

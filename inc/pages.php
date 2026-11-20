@@ -112,7 +112,7 @@ function hitscam_bundles() {
 		}
 		if ( $items ) { $out[] = array( 'id' => 'b' . ( $i + 1 ), 'name' => $p[0], 'desc' => $p[1], 'off' => max( 0, min( 60, (int) $p[2] ) ), 'items' => $items ); }
 	}
-	return $out;
+	return apply_filters( 'hitscam_bundles_list', $out );
 }
 function hitscam_bundle_price( WC_Product $p ) {
 	return $p->is_type( 'variable' ) ? (float) $p->get_variation_price( 'min' ) : (float) wc_get_price_to_display( $p );

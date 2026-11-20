@@ -45,29 +45,10 @@ if ( $cats && ! is_wp_error( $cats ) ) : ?>
 	<?php endforeach; ?></div></section>
 <?php endif;
 
-$rows = array(
-	array( 'ট্রেন্ডিং', array( 'limit' => 4, 'orderby' => 'popularity', 'status' => 'publish', 'stock_status' => 'instock', 'visibility' => 'catalog' ) ),
-	array( 'নতুন এসেছে', array( 'limit' => 4, 'orderby' => 'date', 'status' => 'publish', 'stock_status' => 'instock', 'visibility' => 'catalog' ) ),
-	array( 'অফার', array( 'limit' => 4, 'include' => array_slice( wc_get_product_ids_on_sale(), 0, 4 ) ?: array( 0 ), 'status' => 'publish', 'stock_status' => 'instock' ) ),
-);
-foreach ( $rows as $r ) :
-	$list = wc_get_products( $r[1] );
-	if ( ! $list ) { continue; } ?>
-<section class="container section"><div class="section-head"><h2><?php echo esc_html( $r[0] ); ?></h2><a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">সব দেখুন →</a></div><div class="row g-3">
-	<?php
-	global $post, $product;
-	foreach ( $list as $p ) {
-		$post    = get_post( $p->get_id() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		setup_postdata( $post );
-		$product = $p; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		if ( ! $p->is_visible() ) { continue; }
-		echo '<div class="col-12 col-sm-6 col-md-4 col-lg-3">';
-		wc_get_template_part( 'content', 'product' );
-		echo '</div>';
-	}
-	wp_reset_postdata(); ?>
-</div></section>
-<?php endforeach; endif; ?>
+hitscam_place( 'home' );
+?>
+<?php endif; ?>
+
 <?php
 while ( have_posts() ) { the_post(); if ( get_the_content() ) { echo '<section class="container section">'; the_content(); echo '</section>'; } }
 ?>

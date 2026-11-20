@@ -11,6 +11,22 @@
 - **HitsCam API** (WooCommerce → HitsCam API): `/wp-json/hitscam/v1` — নিজস্ব API key (হ্যাশড, স্কোপ, রেট-লিমিট), products/orders/customers/coupons/reports/stock, HMAC-সাইনড ওয়েবহুক (রিট্রাই), OpenAPI: `/wp-json/hitscam/v1/openapi.json`।
   `curl -H "Authorization: Bearer <key>" https://site/wp-json/hitscam/v1/products`
 
+## v2.3.0 — অ্যাডমিন-কনফিগারযোগ্য সব কিছু
+
+| ফিচার | কোথায় |
+|---|---|
+| গ্রুপড পণ্য: নাম+দাম+পরিমাণ স্টেপার সারি, "Grouped Product" ব্যাজ (পেজ ও কার্ড) | `inc/modules/e1-group.php` |
+| Instant order পপআপ মডাল ("অর্ডার নাউ") — চেকআউট ফর্ম মডালে | `assets/js/modules/e5-modal.js` |
+| চেকআউট = টেমপ্লেটের "Your details" + "Order Summary" প্যানেল | `woocommerce/checkout/form-checkout.php`, `assets/css/modules/e6-checkout.css` |
+| ফোন ভেরিফাই: SMS কোড বা WhatsApp/IMO/… চ্যানেল (HitsCam → মেসেজিং চ্যানেল-এ নতুন যোগ) | `inc/modules/e3-channels.php`, `e7-verify.js` |
+| অর্ডার রিকনফার্ম / আপডেট নোটিফিকেশন: SMS গেটওয়ে না থাকলে চ্যানেল-বাটন | `woocommerce/checkout/thankyou.php`, `e4-order.js` |
+| কুরিয়ার ট্র্যাকার (লিংক বা ওয়েবহুক API) অর্ডার টাইমলাইনে | `e3-channels.php`, `e4-order.php` |
+| পণ্য-ভিত্তিক "বেশি কিনলে বেশি ছাড়" (`_hc_bulk`) | `inc/options.php` |
+| ট্রাস্ট ব্যাজ রিপিটার; সেকশন ম্যানেজার (কোন পেজে কোন সেকশন + কন্ডিশন) | `e0-core.php`, `e2-sections.php` |
+| Camera finder / Bundle offers / গাইড মেনুতে; বান্ডেল CPT (`hc_bundle`); "পেজ ও মেনু" থেকে নতুন পেজ | `inc/modules/e8-content.php` |
+| ডেমো ডেটা (টেমপ্লেটের ডামি ডেটা) থিম অ্যাক্টিভেশনে DB-তে; পুনরায় ইমপোর্ট বাটন | `e8-content.php`, `inc/data/` |
+| GitHub Actions: CI (lint + WP/WooCommerce ইনস্টল + স্মোক) ও Release (ট্যাগ + জিপ) | `.github/workflows/` |
+
 ## v2.2.0 — টেমপ্লেটের বাকি সব ফিচার (WooCommerce ডেটায়)
 কোড `inc/modules/*.php`, `assets/js/modules/*.js`, `assets/css/modules/*.css` (ফাইল দিলেই অটো-লোড)।
 

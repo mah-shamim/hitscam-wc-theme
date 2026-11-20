@@ -33,8 +33,17 @@ $disc = (float) $order->get_discount_total();
 $ship = (float) $order->get_shipping_total();
 $pay_status = '';
 $bn = fn( $n ) => hitscam_bn_digits( $n );
+$sms_mode   = function_exists( 'hitscam_msg_mode' ) && 'sms' === hitscam_msg_mode();
+$msg_order  = 'HitsCam: প্রিয় ' . $name . ', আপনার অর্ডার #' . $order->get_order_number() . ' (মোট ' . wp_strip_all_tags( wc_price( $order->get_total() ) ) . ') গ্রহণ করা হয়েছে। আমাদের প্রতিনিধি কল করবেন। তথ্য ঠিক থাকলে রিকনফার্ম করুন। সাপোর্ট: ' . $tel;
+$msg_reconf = 'HitsCam: আমি অর্ডার #' . $order->get_order_number() . ' রিকনফার্ম করছি। নাম: ' . $name . ', ফোন: ' . $phone;
+$courier_html = function_exists( 'hitscam_e4_courier_panel' ) ? hitscam_e4_courier_panel( $order ) : '';
+if ( $courier_html && $cur < 3 ) { $cur = 3; }
+$addon = function_exists( 'hitscam_e4_addon_product' ) ? hitscam_e4_addon_product( $order ) : null;
+$left  = max( 0, ( $order->get_date_created()->getTimestamp() + hitscam_a2_window() * 60 ) - time() );
+$uid   = $order->get_customer_id();
+$earn  = (int) $order->get_meta( '_hc_points_earn' );
 ?>
-<div class="order-received" data-order="<?php echo (int) $oid; ?>" data-key="<?php echo esc_attr( $order->get_order_key() ); ?>" data-phone="<?php echo esc_attr( $phone ); ?>" data-name="<?php echo esc_attr( $name ); ?>" data-total="<?php echo esc_attr( wp_strip_all_tags( wc_price( $order->get_total() ) ) ); ?>" data-reconf="<?php echo $reconf ? 1 : 0; ?>">
+<div class="order-received" data-order="<?php echo (int) $oid; ?>" data-key="<?php echo esc_attr( $order->get_order_key() ); ?>" data-phone="<?php echo esc_attr( $phone ); ?>" data-name="<?php echo esc_attr( $name ); ?>" data-total="<?php echo esc_attr( wp_strip_all_tags( wc_price( $order->get_total() ) ) ); ?>" data-reconf="<?php echo $reconf ? 1 : 0; ?>" data-sms="<?php echo $sms_mode ? 1 : 0; ?>" data-msg="<?php echo esc_attr( $msg_order ); ?>" data-msgdone="<?php echo esc_attr( 'HitsCam: ধন্যবাদ ' . $name . '! আপনার অর্ডার #' . $order->get_order_number() . ' রিকনফার্ম হয়েছে। শীঘ্রই প্যাকেজিং শুরু হবে।' ); ?>">
 	<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4"><h1 class="page-title mb-0">Order received</h1>
 		<span class="d-flex gap-2 flex-wrap"><button type="button" class="btn btn-brand rounded-pill no-print reorder-btn" id="reorderBtn"><i class="bi bi-arrow-repeat"></i> আবার অর্ডার করুন</button>
 		<button type="button" class="btn btn-soft rounded-pill no-print" id="printBtn"><i class="bi bi-printer"></i> ইনভয়েস প্রিন্ট</button></span></div>
@@ -60,13 +69,14 @@ $bn = fn( $n ) => hitscam_bn_digits( $n );
 
 	<div class="panel mb-3 no-print" id="reconfirmPanel">
 		<h5 class="fw-bold">🔁 অর্ডার রিকনফার্ম</h5>
-		<p class="text-muted mb-3">অর্ডারের তথ্য ঠিক থাকলে রিকনফার্ম করুন। আপনার মোবাইল <b id="smsPhone" class="text-dark"><?php echo esc_html( $phone ); ?></b> নাম্বারে নিচের মতো SMS যাবে।</p>
+		<p class="text-muted mb-3">অর্ডারের তথ্য ঠিক থাকলে রিকনফার্ম করুন। আপনার মোবাইল <b id="smsPhone" class="text-dark"><?php echo esc_html( $phone ); ?></b> নাম্বারে <?php echo $sms_mode ? 'নিচের মতো SMS পাঠানো হয়েছে।' : 'নিচের মেসেজটি আপনার পছন্দের অ্যাপে পাঠিয়ে রিকনফার্ম করুন।'; ?></p>
 		<div class="sms-thread mb-3" id="smsThread" aria-live="polite"></div>
 		<div class="d-flex flex-wrap gap-2">
 			<button type="button" class="btn btn-brand btn-lg rounded-pill flex-fill" id="reconfirmBtn"><i class="bi bi-patch-check-fill"></i> অর্ডার রিকনফার্ম করুন</button>
-			<button type="button" class="btn btn-soft btn-lg rounded-pill flex-fill" id="resendSms"><i class="bi bi-chat-dots"></i> আবার SMS পাঠান</button>
+			<?php if ( $sms_mode ) : ?><button type="button" class="btn btn-soft btn-lg rounded-pill flex-fill" id="resendSms"><i class="bi bi-chat-dots"></i> আবার SMS পাঠান</button><?php endif; ?>
 		</div>
-		<p class="small text-muted mb-0 mt-2">SMS পাঠাতে একটি SMS গেটওয়ে যুক্ত করতে হয় (<code>hitscam_send_sms</code> অ্যাকশন); না থাকলে এখানে প্রিভিউ দেখায় ও রিকনফার্ম অর্ডার নোটে সেভ হয়।</p>
+		<?php if ( ! $sms_mode && function_exists( 'hitscam_channel_buttons' ) ) : ?><div class="d-flex flex-wrap gap-2 mt-2" id="chanReconf"><?php echo hitscam_channel_buttons( 'reconfirm', $msg_reconf, $phone, 'btn btn-soft rounded-pill' ); // phpcs:ignore ?></div><?php endif; ?>
+		<p class="small text-muted mb-0 mt-2"><?php echo $sms_mode ? 'SMS এ পাঠানো তথ্য ঠিক থাকলে রিকনফার্ম বাটনে চাপ দিন।' : 'মেসেজ পাঠানোর পর “অর্ডার রিকনফার্ম করুন” চাপুন — আমাদের টিম যাচাই করে নেবে।'; ?></p>
 	</div>
 
 	<div class="panel mb-3">
@@ -77,6 +87,7 @@ $bn = fn( $n ) => hitscam_bn_digits( $n );
 			<li class="<?php echo esc_attr( $cls ); ?>"><div class="tl-dot"><?php echo 0 === strpos( $s[0], 'bi-' ) ? ( 'done' === $cls ? '<i class="bi bi-check-lg"></i>' : '<i class="bi ' . esc_attr( $s[0] ) . '"></i>' ) : esc_html( $s[0] ); ?></div><div><h6><?php echo esc_html( $s[1] ); ?></h6><p><?php echo esc_html( $s[2] ); ?></p></div></li>
 			<?php endforeach; ?>
 		</ul>
+		<?php echo $courier_html; // phpcs:ignore ?>
 	</div>
 
 	<div class="panel mb-3">
@@ -84,12 +95,20 @@ $bn = fn( $n ) => hitscam_bn_digits( $n );
 		<?php foreach ( $order->get_items() as $it ) : $pr = $it->get_product(); $img = $pr ? $pr->get_image( array( 64, 64 ), array( 'class' => 'rounded-3', 'width' => 64, 'height' => 64 ) ) : ''; ?>
 		<div class="d-flex gap-3 align-items-center p-3 mb-2 rounded-4 border bg-light"><?php echo wp_kses_post( $img ); ?><div class="flex-grow-1"><div class="fw-semibold"><?php echo esc_html( $it->get_name() ); ?></div><small>পরিমাণ: <?php echo esc_html( $bn( $it->get_quantity() ) ); ?></small></div><b><?php echo wp_kses_post( wc_price( $it->get_total() ) ); ?></b></div>
 		<?php endforeach; ?>
+		<?php if ( $addon && $left > 0 && $order->has_status( array( 'pending', 'processing', 'on-hold' ) ) ) : ?>
+		<div class="p-3 mb-2 rounded-4 border border-danger-subtle bg-danger-subtle no-print d-flex gap-3 align-items-center flex-wrap" id="addonOffer"><div class="flex-grow-1"><small class="text-danger fw-semibold"><i class="bi bi-plus-circle"></i> অর্ডারের সাথে যোগ করুন · আর <?php echo esc_html( $bn( (int) ceil( $left / 60 ) ) ); ?> মিনিট</small><div class="fw-semibold"><?php echo esc_html( $addon->get_name() ); ?></div><small class="text-muted">একই ঠিকানায় একই প্যাকেজে যাবে, ডেলিভারিতে পরিশোধ</small></div><div class="text-end"><b class="text-brand d-block"><?php echo wp_kses_post( wc_price( $addon->get_price() ) ); ?></b><button type="button" class="btn btn-brand btn-sm rounded-pill" id="addonBtn" data-pid="<?php echo (int) $addon->get_id(); ?>">যোগ করুন</button></div></div>
+		<?php endif; ?>
+		<?php $ref = function_exists( 'hitscam_e4_ref_for' ) ? hitscam_e4_ref_for( $order ) : ''; if ( $ref ) : $rtxt = 'HitsCam এ ' . $ref . ' কোড দিয়ে কেনাকাটায় ছাড় পান: ' . home_url( '/?ref=' . $ref ); ?>
+		<div class="p-3 mb-2 rounded-4 border border-dashed no-print d-flex gap-3 align-items-center flex-wrap"><div class="flex-grow-1"><b><i class="bi bi-gift text-brand"></i> বন্ধুকে ৳২০০ ছাড় দিন</b><div class="small text-muted">আপনার কোড <b class="text-brand"><?php echo esc_html( $ref ); ?></b></div></div><a class="btn btn-success btn-sm rounded-pill" target="_blank" rel="noopener" href="https://wa.me/?text=<?php echo rawurlencode( $rtxt ); ?>"><i class="bi bi-whatsapp"></i> শেয়ার করুন</a></div>
+		<?php endif; ?>
 		<hr style="border-style:dashed">
 		<div class="totals-row"><span>Subtotal:</span><span><?php echo wp_kses_post( wc_price( $sub ) ); ?></span></div>
 		<?php if ( $disc > 0 ) : ?><div class="totals-row"><span>Discount:</span><span>-<?php echo wp_kses_post( wc_price( $disc ) ); ?></span></div><?php endif; ?>
 		<div class="totals-row"><span>Shipping:</span><span><?php echo $ship > 0 ? wp_kses_post( wc_price( $ship ) ) : 'Free shipping'; ?></span></div>
+		<?php if ( $earn > 0 ) : ?><div class="totals-row"><span>অর্জিত পয়েন্ট:</span><b><?php echo esc_html( $bn( $earn ) ); ?><?php echo $uid && function_exists( 'hitscam_points' ) ? ' (ব্যালেন্স ' . esc_html( $bn( hitscam_points( $uid ) ) ) . ')' : ''; ?></b></div><?php endif; ?>
 		<div class="totals-row total"><span>Total:</span><span><?php echo wp_kses_post( $order->get_formatted_order_total() ); ?></span></div>
 		<div class="totals-row"><span>Payment method:</span><b><?php echo esc_html( $order->get_payment_method_title() ?: '—' ); ?></b></div>
+		<div class="totals-row"><span>পেমেন্ট অবস্থা:</span><b><?php echo $order->is_paid() && ! in_array( $order->get_payment_method(), array( 'cod', 'hc_codadv' ), true ) ? 'পরিশোধিত' : ( (float) $order->get_meta( '_hc_advance' ) > 0 ? 'অগ্রিম পাঠানো, বাকি ডেলিভারিতে' : 'ডেলিভারিতে পরিশোধ' ); ?></b></div>
 		<?php if ( $order->get_transaction_id() ) : ?><div class="totals-row"><span>Transaction ID:</span><b><?php echo esc_html( $order->get_transaction_id() ); ?></b></div><?php endif; ?>
 	</div>
 
@@ -102,6 +121,9 @@ $bn = fn( $n ) => hitscam_bn_digits( $n );
 		<div class="col-md-6"><div class="panel h-100"><h5 class="fw-bold">💡 এরপর কী হবে?</h5>
 			<ol class="ps-3 mb-0"><li class="mb-1">আমাদের প্রতিনিধি ১-২ ঘণ্টার মধ্যে কল করবে</li><li class="mb-1">অর্ডার কনফার্মেশনের পর প্যাকেজিং শুরু হবে</li><li class="mb-1">কুরিয়ার আপনার ঠিকানায় পৌঁছে দেবে</li><li>পণ্য হাতে পেয়ে চেক করে পেমেন্ট করুন</li></ol></div></div>
 	</div>
+	<div class="notif-box no-print" id="notifBox"><div><b><i class="bi bi-bell-fill text-brand"></i> অর্ডারের আপডেট নোটিফিকেশনে পান</b><div class="small text-muted" id="notifTxt"><?php echo $sms_mode ? 'কনফার্ম, কুরিয়ারে পাঠানো ও ডেলিভারির খবর SMS এ জানানো হবে।' : 'কোন অ্যাপে আপডেট চান বেছে নিন — আমরা সেখানে জানাব।'; ?></div>
+		<?php if ( ! $sms_mode && function_exists( 'hitscam_channels' ) ) : ?><div class="d-flex flex-wrap gap-2 mt-2" id="chanNotify"><?php foreach ( hitscam_channels( 'notify' ) as $c ) : ?><button type="button" class="btn btn-soft btn-sm rounded-pill hc-notify-ch" data-ch="<?php echo esc_attr( $c['key'] ); ?>" data-href="<?php echo esc_url( hitscam_channel_link( $c, 'HitsCam: অর্ডার #' . $order->get_order_number() . ' এর আপডেট এই অ্যাপে পেতে চাই। ফোন: ' . $phone, $phone ) ); ?>"><i class="bi <?php echo esc_attr( $c['icon'] ); ?>"></i> <?php echo esc_html( $c['label'] ); ?></button><?php endforeach; ?></div><?php endif; ?></div>
+		<button type="button" class="btn btn-brand btn-sm rounded-pill" id="notifBtn">চালু করুন</button></div>
 	<div class="row g-2 mb-5 no-print">
 		<div class="col-lg"><a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="btn btn-brand btn-lg w-100">আরও কেনাকাটা করুন</a></div>
 		<div class="col-6 col-lg-auto"><a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="btn btn-soft btn-lg w-100">অর্ডার বিস্তারিত</a></div>

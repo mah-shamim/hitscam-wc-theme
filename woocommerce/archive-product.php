@@ -62,5 +62,6 @@ $desc    = is_shop() ? '' : term_description();
 		<?php endif; ?>
 	</section>
 </div>
+<?php hitscam_place( is_product_category() ? 'category' : 'shop' ); ?>
 </main>
 <?php get_footer( 'shop' ); ?>

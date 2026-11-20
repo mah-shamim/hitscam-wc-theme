@@ -41,9 +41,6 @@ while ( have_posts() ) :
 			$attrs[] = array( 'key' => 'attribute_' . sanitize_title( $an ), 'label' => wc_attribute_label( $an, $product ), 'values' => $vals );
 		}
 	}
-	if ( $grouped ) {
-		$attrs[] = array( 'key' => 'group', 'label' => 'প্যাকেজ', 'values' => array_map( fn( $v ) => array( 'v' => (string) $v['id'], 'n' => $v['label'] ), $vars ) );
-	}
 	$low = 0;
 	foreach ( $vars as $i => $v ) {
 		if ( $v['stock'] && ( ! $vars[ $low ]['stock'] || $v['price'] < $vars[ $low ]['price'] ) ) {
@@ -54,18 +51,37 @@ while ( have_posts() ) :
 	?>
 <main id="main" class="container pb-5" data-pdp data-id="<?php echo (int) $pid; ?>" data-ext="<?php echo $ext ? 1 : 0; ?>" data-stock="<?php echo $in_stock ? 1 : 0; ?>" data-price="<?php echo esc_attr( (float) $product->get_price() ); ?>" data-name="<?php echo esc_attr( $product->get_name() ); ?>" data-wa="<?php echo esc_attr( $wa ); ?>" data-variable="<?php echo $vars ? 1 : 0; ?>">
 	<?php hitscam_breadcrumbs(); ?>
-	<script type="application/json" id="pdpVars"><?php echo wp_json_encode( array( 'vars' => $vars, 'attrs' => $attrs, 'sel' => $low, 'grouped' => $grouped ? 1 : 0 ) ); ?></script>
+	<script type="application/json" id="pdpVars"><?php echo wp_json_encode( array( 'vars' => $grouped ? array() : $vars, 'attrs' => $attrs, 'sel' => $low, 'grouped' => $grouped ? 1 : 0 ) ); ?></script>
 	<div class="row g-4 mb-4">
 		<div class="col-lg-6"><div class="pg-sticky">
 			<div class="zoom-box" id="zoomBox" role="img" aria-label="<?php echo esc_attr( $product->get_name() ); ?>" data-imgs="<?php echo esc_attr( wp_json_encode( $urls ) ); ?>" style="background-image:url('<?php echo esc_url( $urls[0] ); ?>');background-size:cover;background-position:center"></div>
 			<?php if ( count( $urls ) > 1 ) : ?>
 			<div class="owl-carousel owl-theme mt-3" id="thumbs"><?php foreach ( $thumbs as $i => $t ) : ?><div class="thumb<?php echo 0 === $i ? ' active' : ''; ?>" data-i="<?php echo (int) $i; ?>"><img src="<?php echo esc_url( $t ); ?>" alt=""></div><?php endforeach; ?></div>
 			<?php endif; ?>
-		</div></div>
+		</div>
+			<?php if ( $buyable && $in_stock && ! $ext ) : ?>
+			<div class="pg-below mt-3">
+			<div class="notify-box mb-3" id="pPriceAlert">
+				<div class="fw-semibold mb-1"><i class="bi bi-bell text-brand"></i> দাম কমলে জানান</div>
+				<div class="small text-muted mb-2">এখনকার দাম <?php echo wp_kses_post( wc_price( (float) $product->get_price() ) ); ?>। কমলে আপনার নাম্বারে WhatsApp/SMS এ জানানো হবে।</div>
+				<form class="row g-2" id="priceAlertForm" data-type="price" novalidate><div class="col-7"><input class="form-control" name="phone" type="tel" inputmode="tel" placeholder="01XXXXXXXXX" required></div><div class="col-5"><input class="form-control" name="target" type="number" min="1" placeholder="কাঙ্ক্ষিত দাম ৳"></div><div class="col-12"><button class="btn btn-brand w-100" type="submit">অ্যালার্ট চালু করুন</button></div></form>
+				<div class="small text-success mt-1" id="priceOk" style="display:none"></div>
+			</div>
+			<div class="deliv-box" id="pDeliv">
+				<div class="fw-semibold"><i class="bi bi-truck text-brand"></i> আনুমানিক ডেলিভারি</div>
+				<div class="zones" role="group" aria-label="ডেলিভারি এলাকা"><button type="button" class="zone-btn" data-z="70">ঢাকার ভিতরে</button><button type="button" class="zone-btn" data-z="130">ঢাকার বাইরে</button></div>
+				<div id="delivText" class="text-muted"></div>
+			</div>
+			<details class="emi-box" id="pEmi" style="display:none"><summary><i class="bi bi-credit-card-2-front text-brand"></i> ক্রেডিট কার্ড EMI: মাসে <b id="emiFrom"></b> থেকে <small class="text-muted">(দেখুন)</small></summary>
+				<table class="emi-table"><thead><tr><th>মেয়াদ</th><th>মাসিক কিস্তি</th><th>মোট</th></tr></thead><tbody id="emiRows"></tbody></table><small class="text-muted">ডেমো হার। ব্যাংক ও কার্ড অনুযায়ী প্রসেসিং ফি পরিবর্তন হতে পারে।</small></details>
+			</div>
+			<?php endif; ?>
+		</div>
 		<div class="col-lg-6"><div class="pi-scroll">
+			<span class="badge bg-dark mb-2" id="typeBadge"><?php echo esc_html( array( 'simple' => 'Simple Product', 'variable' => 'Variable Product', 'grouped' => 'Grouped Product', 'external' => 'External / Affiliate' )[ $product->get_type() ] ?? ucfirst( $product->get_type() ) ); ?></span>
 			<h1 class="h3 fw-bold" id="pName"><?php the_title(); ?></h1>
 			<div class="mb-2" id="pRating"><?php echo wp_kses_post( wc_get_rating_html( $product->get_average_rating() ) ); ?> <span class="text-muted">(<?php echo esc_html( hitscam_bn_digits( $product->get_review_count() ) ); ?> রিভিউ)</span></div>
-			<div class="prod-price mb-2" id="pPrice"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
+			<div class="prod-price mb-2" id="pPrice"><?php if ( $grouped && $vars ) : $gl = $vars[ $low ]; ?><span class="fs-6 text-muted">থেকে </span><?php echo esc_html( hitscam_money( min( array_column( $vars, 'price' ) ) ) ); ?> <span class="fs-6 text-muted ms-2">| সিলেক্টেড: <b id="grpSel"><?php echo esc_html( hitscam_money( $gl['price'] ) ); ?></b></span><?php else : echo wp_kses_post( $product->get_price_html() ); endif; ?></div>
 			<p class="text-muted" id="pShort"><?php echo wp_kses_post( wp_strip_all_tags( $product->get_short_description() ) ); ?></p>
 			<?php if ( function_exists( 'hitscam_bulk_box' ) ) { hitscam_bulk_box(); } ?>
 			<ul class="meta-list">
@@ -73,6 +89,9 @@ while ( have_posts() ) :
 				<?php if ( $cat ) : ?><li><b>ক্যাটাগরি:</b> <a class="text-brand" href="<?php echo esc_url( get_term_link( $cat ) ); ?>"><?php echo esc_html( $cat->name ); ?></a></li><?php endif; ?>
 				<li id="pStock"><?php echo hitscam_stock_html( $product ); // phpcs:ignore ?></li>
 			</ul>
+			<?php if ( $grouped && $vars ) : ?>
+			<div id="pOptions" class="mb-3"><?php echo hitscam_group_rows( $vars, $low ); // phpcs:ignore ?></div>
+			<?php endif; ?>
 			<?php if ( $attrs ) : ?>
 			<div id="pOptions" class="mb-3"><div class="fw-semibold mb-2">অপশন বেছে নিন:</div><div class="attr-ui">
 				<?php foreach ( $attrs as $a ) : ?>
@@ -86,7 +105,7 @@ while ( have_posts() ) :
 			<div class="mb-3"><a class="btn btn-brand btn-lg rounded-pill w-100" href="<?php echo esc_url( $product->get_product_url() ); ?>" target="_blank" rel="sponsored noopener"><i class="bi bi-box-arrow-up-right"></i> <?php echo esc_html( $product->single_add_to_cart_text() ); ?></a></div>
 			<?php elseif ( $buyable && $in_stock ) : ?>
 			<div id="pBuy" class="mb-3">
-				<div class="qty qty-block mb-2" id="pQtyWrap"><button type="button" class="qty-btn" id="qMinus" aria-label="কমান">−</button><input type="number" id="pQty" value="1" min="1" aria-label="পরিমাণ"><button type="button" class="qty-btn" id="qPlus" aria-label="বাড়ান">+</button></div>
+				<div class="qty qty-block mb-2" id="pQtyWrap"<?php echo $grouped ? ' hidden' : ''; ?>><button type="button" class="qty-btn" id="qMinus" aria-label="কমান">−</button><input type="number" id="pQty" value="1" min="1" aria-label="পরিমাণ"><button type="button" class="qty-btn" id="qPlus" aria-label="বাড়ান">+</button></div>
 				<div class="buy-btns d-flex gap-2">
 					<button class="btn btn-brand-outline btn-lg rounded-pill flex-fill p-add" type="button"><i class="bi bi-cart-plus"></i> অ্যাড টু কার্ট</button>
 					<button class="btn btn-brand btn-lg rounded-pill flex-fill p-order" type="button"><i class="bi bi-lightning-charge-fill"></i> অর্ডার নাউ</button>
@@ -101,21 +120,6 @@ while ( have_posts() ) :
 				<div class="small text-success mt-1" id="notifyOk" style="display:none"></div>
 			</div>
 			<?php endif; ?>
-			<?php if ( $buyable && $in_stock && ! $ext ) : ?>
-			<div class="notify-box mb-3" id="pPriceAlert">
-				<div class="fw-semibold mb-1"><i class="bi bi-bell text-brand"></i> দাম কমলে জানান</div>
-				<div class="small text-muted mb-2">এখনকার দাম <?php echo wp_kses_post( wc_price( (float) $product->get_price() ) ); ?>। কমলে আপনার নাম্বারে WhatsApp/SMS এ জানানো হবে।</div>
-				<form class="row g-2" id="priceAlertForm" data-type="price" novalidate><div class="col-7"><input class="form-control" name="phone" type="tel" inputmode="tel" placeholder="01XXXXXXXXX" required></div><div class="col-5"><input class="form-control" name="target" type="number" min="1" placeholder="কাঙ্ক্ষিত দাম ৳"></div><div class="col-12"><button class="btn btn-brand w-100" type="submit">অ্যালার্ট চালু করুন</button></div></form>
-				<div class="small text-success mt-1" id="priceOk" style="display:none"></div>
-			</div>
-			<div class="deliv-box" id="pDeliv">
-				<div class="fw-semibold"><i class="bi bi-truck text-brand"></i> আনুমানিক ডেলিভারি</div>
-				<div class="zones" role="group" aria-label="ডেলিভারি এলাকা"><button type="button" class="zone-btn" data-z="70">ঢাকার ভিতরে</button><button type="button" class="zone-btn" data-z="130">ঢাকার বাইরে</button></div>
-				<div id="delivText" class="text-muted"></div>
-			</div>
-			<details class="emi-box" id="pEmi" style="display:none"><summary><i class="bi bi-credit-card-2-front text-brand"></i> ক্রেডিট কার্ড EMI: মাসে <b id="emiFrom"></b> থেকে <small class="text-muted">(দেখুন)</small></summary>
-				<table class="emi-table"><thead><tr><th>মেয়াদ</th><th>মাসিক কিস্তি</th><th>মোট</th></tr></thead><tbody id="emiRows"></tbody></table><small class="text-muted">ডেমো হার। ব্যাংক ও কার্ড অনুযায়ী প্রসেসিং ফি পরিবর্তন হতে পারে।</small></details>
-			<?php endif; ?>
 			<div class="share-row mb-3"><span class="text-muted small">শেয়ার করুন:</span>
 				<a class="share-btn" id="shFb" target="_blank" rel="noopener" aria-label="Facebook এ শেয়ার" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo rawurlencode( get_permalink() ); ?>"><i class="bi bi-facebook"></i></a>
 				<a class="share-btn" id="shWa" target="_blank" rel="noopener" aria-label="WhatsApp এ শেয়ার" href="https://wa.me/?text=<?php echo rawurlencode( get_the_title() . ' ' . get_permalink() ); ?>"><i class="bi bi-whatsapp"></i></a>
@@ -128,11 +132,7 @@ while ( have_posts() ) :
 		</div></div>
 	</div>
 
-	<div class="row g-3 trust-row mb-4 m-slider s-md" data-autoslide>
-		<?php foreach ( array( array( 'bi-truck', 'Fast delivery', 'সারা দেশে' ), array( 'bi-shield-check', 'Secure payment', '১০০% নিরাপদ' ), array( 'bi-arrow-repeat', '7-day return', 'সহজ রিটার্ন' ), array( 'bi-headset', 'Online Support 24/7', 'সবসময় পাশে' ) ) as $t ) : ?>
-		<div class="col-6 col-lg-3"><div class="t-item"><i class="bi <?php echo esc_attr( $t[0] ); ?>"></i><div><b><?php echo esc_html( $t[1] ); ?></b><small class="text-muted"><?php echo esc_html( $t[2] ); ?></small></div></div></div>
-		<?php endforeach; ?>
-	</div>
+	<?php hitscam_trust_row( 'product' ); ?>
 
 	<div class="row g-3 mb-4">
 		<div class="col-lg-6"><div class="tab-col"><h4>ওভারভিউ</h4><div id="overview"><?php echo wp_kses_post( apply_filters( 'the_content', get_the_content() ) ); ?></div></div></div>
@@ -176,30 +176,6 @@ while ( have_posts() ) :
 	</div>
 
 	<?php
-	$cross = array_filter( array_map( 'wc_get_product', $product->get_upsell_ids() ) );
-	if ( ! $cross && $cat ) {
-		$cross = wc_get_products( array( 'limit' => 4, 'category' => array( $cat->slug ), 'exclude' => array( $pid ), 'status' => 'publish', 'orderby' => 'popularity', 'stock_status' => 'instock' ) );
-	}
-	$cross = array_slice( array_values( $cross ), 0, 4 );
-	global $post;
-	$grid = function ( $list ) use ( &$post, &$product ) {
-		$keep = array( $post, $product );
-		foreach ( $list as $p ) {
-			if ( ! $p || ! $p->is_visible() ) { continue; }
-			$post    = get_post( $p->get_id() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride
-			$product = $p; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
-			setup_postdata( $post );
-			echo '<div class="col-12 col-sm-6 col-md-4 col-lg-3">';
-			wc_get_template_part( 'content', 'product' );
-			echo '</div>';
-		}
-		list( $post, $product ) = $keep; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		wp_reset_postdata();
-	};
-	if ( $cross ) : ?>
-	<div class="section-head"><h2>আপনার পছন্দ হতে পারে</h2></div>
-	<div class="row g-3 mb-4" id="crossSells"><?php $grid( $cross ); ?></div>
-	<?php endif;
 	$faqs = get_posts( array( 'post_type' => 'hc_faq', 'numberposts' => 4, 'orderby' => 'menu_order date', 'order' => 'ASC' ) );
 	if ( $faqs ) : $faq_page = get_page_by_path( 'faq' ); ?>
 	<div class="panel my-4" id="pHelp"><div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h5 fw-bold m-0"><i class="bi bi-question-circle text-brand"></i> এই পণ্য নিয়ে সাধারণ প্রশ্ন</h2><?php if ( $faq_page ) : ?><a href="<?php echo esc_url( get_permalink( $faq_page ) ); ?>" class="small">সব প্রশ্ন →</a><?php endif; ?></div>
@@ -207,15 +183,7 @@ while ( have_posts() ) :
 			<div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ph<?php echo (int) $i; ?>"><?php echo esc_html( get_the_title( $f ) ); ?></button></h3><div id="ph<?php echo (int) $i; ?>" class="accordion-collapse collapse" data-bs-parent="#pHelpAcc"><div class="accordion-body"><?php echo wp_kses_post( wpautop( $f->post_content ) ); ?></div></div></div>
 		<?php endforeach; ?></div></div>
 	<?php endif; ?>
-	<div class="recent-wrap mb-4" id="recentWrap" style="display:none"><div class="section-head"><h2>সম্প্রতি দেখা পণ্য</h2></div><div class="row g-3" id="secRecent"></div></div>
-	<?php
-	$cross_ids = array_map( fn( $c ) => $c->get_id(), $cross );
-	$rel       = array_filter( array_map( 'wc_get_product', wc_get_related_products( $pid, 8, array_merge( array( $pid ), $cross_ids ) ) ) );
-	$rel       = array_slice( array_values( $rel ), 0, 4 );
-	if ( $rel ) : ?>
-	<div class="section-head"><h2>Related Products</h2></div>
-	<div class="row g-3" id="related"><?php $grid( $rel ); ?></div>
-	<?php endif; ?>
+	<?php hitscam_place( 'product' ); ?>
 </main>
 <?php if ( ! $ext && $buyable && $in_stock ) : ?>
 <div class="buybar" id="buyBar" aria-hidden="true"><div class="bb-info"><div class="bb-name"><?php echo esc_html( wp_trim_words( get_the_title(), 7, '…' ) ); ?></div><div class="bb-price" id="bbPrice"></div></div><button class="btn btn-brand rounded-pill bb-btn" id="bbBtn" type="button">অর্ডার নাউ</button></div>

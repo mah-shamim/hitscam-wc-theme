@@ -1,0 +1,902 @@
+{
+ "categories": [
+  {
+   "slug": "ip-camera",
+   "name": "আইপি ক্যামেরা",
+   "img": "IP Cam",
+   "dark": false
+  },
+  {
+   "slug": "cc-camera",
+   "name": "সিসি ক্যামেরা",
+   "img": "CC Cam",
+   "dark": true
+  },
+  {
+   "slug": "security",
+   "name": "সিকিউরিটি ক্যামেরা",
+   "img": "Security",
+   "dark": false
+  },
+  {
+   "slug": "memory-card",
+   "name": "মেমোরি কার্ড",
+   "img": "Memory",
+   "dark": true
+  },
+  {
+   "slug": "mini-ups",
+   "name": "মিনি ইউপিএস",
+   "img": "Mini UPS",
+   "dark": false
+  },
+  {
+   "slug": "smartphone",
+   "name": "স্মার্টফোন",
+   "img": "Phone",
+   "dark": true
+  },
+  {
+   "slug": "laptop",
+   "name": "ল্যাপটপ",
+   "img": "Laptop",
+   "dark": false
+  },
+  {
+   "slug": "accessories",
+   "name": "অ্যাক্সেসরিজ",
+   "img": "Access.",
+   "dark": true
+  }
+ ],
+ "products": [
+  {
+   "id": 1,
+   "type": "simple",
+   "name": "4G PTZ Camera – সিম সাপোর্ট আউটডোর ক্যামেরা",
+   "cat": "ip-camera",
+   "sku": "HC-PTZ-4G",
+   "regular": 6500,
+   "sale": 5500,
+   "rating": 4.8,
+   "reviews": 126,
+   "tags": [
+    "trending",
+    "best",
+    "flash"
+   ],
+   "img": "4G PTZ Camera",
+   "dark": false,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "stock": 24,
+   "sold": 1240,
+   "fit": {
+    "place": [
+     "out"
+    ],
+    "power": [
+     "mains"
+    ],
+    "net": [
+     "sim"
+    ]
+   },
+   "info": [
+    [
+     "bi-camera-video",
+     "4MP Full HD"
+    ],
+    [
+     "bi-sim",
+     "4G সিম সাপোর্ট"
+    ],
+    [
+     "bi-arrows-move",
+     "৩৬০° PTZ ঘোরে"
+    ],
+    [
+     "bi-moon-stars",
+     "কালার নাইট ভিশন"
+    ]
+   ]
+  },
+  {
+   "id": 2,
+   "type": "variable",
+   "name": "4 Lens Solar Security Camera – 4G SIM ও WiFi স্মার্ট সিকিউরিটি ক্যামেরা",
+   "cat": "security",
+   "sku": "HC-SOLAR-4L",
+   "regular": 0,
+   "sale": 0,
+   "rating": 4.9,
+   "reviews": 212,
+   "tags": [
+    "trending",
+    "new",
+    "best"
+   ],
+   "img": "Solar 4 Lens",
+   "dark": false,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "attributes": [
+    {
+     "key": "color",
+     "label": "রং",
+     "swatch": true,
+     "values": [
+      {
+       "v": "কালো",
+       "hex": "#111827"
+      },
+      {
+       "v": "সাদা",
+       "hex": "#f8fafc"
+      },
+      {
+       "v": "আর্মি গ্রিন",
+       "hex": "#4d6b3a"
+      },
+      {
+       "v": "ধূসর",
+       "hex": "#9ca3af"
+      }
+     ]
+    },
+    {
+     "key": "conn",
+     "label": "কানেকশন",
+     "values": [
+      "4G SIM + WiFi",
+      "শুধু WiFi",
+      "শুধু SIM",
+      "4G SIM + 128GB কার্ড"
+     ]
+    }
+   ],
+   "variations": [
+    {
+     "label": "কালো / 4G SIM + WiFi",
+     "attrs": {
+      "color": "কালো",
+      "conn": "4G SIM + WiFi"
+     },
+     "regular": 14500,
+     "sale": 12900
+    },
+    {
+     "label": "কালো / শুধু WiFi",
+     "attrs": {
+      "color": "কালো",
+      "conn": "শুধু WiFi"
+     },
+     "regular": 12500,
+     "sale": 11500
+    },
+    {
+     "label": "কালো / শুধু SIM",
+     "attrs": {
+      "color": "কালো",
+      "conn": "শুধু SIM"
+     },
+     "regular": 13200,
+     "sale": 11900
+    },
+    {
+     "label": "কালো / 4G SIM + 128GB কার্ড",
+     "attrs": {
+      "color": "কালো",
+      "conn": "4G SIM + 128GB কার্ড"
+     },
+     "regular": 16000,
+     "sale": 14200
+    },
+    {
+     "label": "সাদা / 4G SIM + WiFi",
+     "attrs": {
+      "color": "সাদা",
+      "conn": "4G SIM + WiFi"
+     },
+     "regular": 14500,
+     "sale": 12900
+    },
+    {
+     "label": "সাদা / শুধু WiFi",
+     "attrs": {
+      "color": "সাদা",
+      "conn": "শুধু WiFi"
+     },
+     "regular": 12500,
+     "sale": 11500
+    },
+    {
+     "label": "সাদা / 4G SIM + 128GB কার্ড",
+     "attrs": {
+      "color": "সাদা",
+      "conn": "4G SIM + 128GB কার্ড"
+     },
+     "regular": 16000,
+     "sale": 14200
+    },
+    {
+     "label": "আর্মি গ্রিন / 4G SIM + WiFi",
+     "attrs": {
+      "color": "আর্মি গ্রিন",
+      "conn": "4G SIM + WiFi"
+     },
+     "regular": 14700,
+     "sale": 13100
+    },
+    {
+     "label": "আর্মি গ্রিন / শুধু WiFi",
+     "attrs": {
+      "color": "আর্মি গ্রিন",
+      "conn": "শুধু WiFi"
+     },
+     "regular": 12700,
+     "sale": 11700
+    },
+    {
+     "label": "আর্মি গ্রিন / শুধু SIM",
+     "attrs": {
+      "color": "আর্মি গ্রিন",
+      "conn": "শুধু SIM"
+     },
+     "regular": 13400,
+     "sale": 12100
+    },
+    {
+     "label": "আর্মি গ্রিন / 4G SIM + 128GB কার্ড",
+     "attrs": {
+      "color": "আর্মি গ্রিন",
+      "conn": "4G SIM + 128GB কার্ড"
+     },
+     "regular": 16200,
+     "sale": 14400
+    },
+    {
+     "label": "ধূসর / 4G SIM + WiFi",
+     "attrs": {
+      "color": "ধূসর",
+      "conn": "4G SIM + WiFi"
+     },
+     "regular": 14600,
+     "sale": 13000
+    },
+    {
+     "label": "ধূসর / শুধু WiFi",
+     "attrs": {
+      "color": "ধূসর",
+      "conn": "শুধু WiFi"
+     },
+     "regular": 12600,
+     "sale": 11600
+    },
+    {
+     "label": "ধূসর / শুধু SIM",
+     "attrs": {
+      "color": "ধূসর",
+      "conn": "শুধু SIM"
+     },
+     "regular": 13300,
+     "sale": 12000
+    }
+   ],
+   "stock": 7,
+   "sold": 2310,
+   "video": "jNQXAC9IVRw",
+   "spin": 12,
+   "fit": {
+    "place": [
+     "out"
+    ],
+    "power": [
+     "solar"
+    ],
+    "net": [
+     "sim",
+     "wifi"
+    ]
+   },
+   "info": [
+    [
+     "bi-phone",
+     "মোবাইল লাইভ ভিউ"
+    ],
+    [
+     "bi-bell",
+     "মোশন অ্যালার্ট"
+    ],
+    [
+     "bi-moon-stars",
+     "নাইট ভিশন"
+    ],
+    [
+     "bi-shield-check",
+     "ওয়ারেন্টি সহ"
+    ]
+   ]
+  },
+  {
+   "id": 3,
+   "type": "grouped",
+   "name": "স্মার্ট হোম সিকিউরিটি কিট (৩ আইটেম)",
+   "cat": "security",
+   "sku": "HC-KIT-3",
+   "regular": 0,
+   "sale": 0,
+   "rating": 4.6,
+   "reviews": 58,
+   "tags": [
+    "trending",
+    "new"
+   ],
+   "img": "Home Kit",
+   "dark": true,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "children": [
+    {
+     "label": "মিনি WiFi ক্যামেরা",
+     "regular": 2200,
+     "sale": 1800
+    },
+    {
+     "label": "ডোর সেন্সর",
+     "regular": 800,
+     "sale": 650
+    },
+    {
+     "label": "ওয়্যারলেস সাইরেন",
+     "regular": 1200,
+     "sale": 900
+    }
+   ],
+   "stock": 15,
+   "sold": 486,
+   "fit": {
+    "place": [
+     "in"
+    ],
+    "power": [
+     "mains"
+    ],
+    "net": [
+     "wifi"
+    ]
+   },
+   "info": [
+    [
+     "bi-phone",
+     "মোবাইল লাইভ ভিউ"
+    ],
+    [
+     "bi-bell",
+     "মোশন অ্যালার্ট"
+    ],
+    [
+     "bi-moon-stars",
+     "নাইট ভিশন"
+    ],
+    [
+     "bi-shield-check",
+     "ওয়ারেন্টি সহ"
+    ]
+   ]
+  },
+  {
+   "id": 4,
+   "type": "external",
+   "name": "Wireless Mini UPS 12V (পার্টনার স্টোর)",
+   "cat": "mini-ups",
+   "sku": "HC-UPS-12",
+   "regular": 1800,
+   "sale": 1500,
+   "rating": 4.4,
+   "reviews": 31,
+   "tags": [
+    "flash",
+    "new"
+   ],
+   "img": "Mini UPS",
+   "dark": false,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "url": "https://example.com/affiliate/mini-ups",
+   "btn": "পার্টনার স্টোরে কিনুন",
+   "stock": 40,
+   "sold": 215,
+   "info": [
+    [
+     "bi-battery-charging",
+     "12V আউটপুট"
+    ],
+    [
+     "bi-lightning-charge",
+     "অটো ব্যাকআপ"
+    ],
+    [
+     "bi-router",
+     "রাউটার/ক্যামেরা সাপোর্ট"
+    ],
+    [
+     "bi-shield-check",
+     "ওয়ারেন্টি সহ"
+    ]
+   ]
+  },
+  {
+   "id": 5,
+   "type": "simple",
+   "name": "64GB হাই-স্পিড মেমোরি কার্ড",
+   "cat": "memory-card",
+   "sku": "HC-MC-64",
+   "regular": 950,
+   "sale": 800,
+   "rating": 4.7,
+   "reviews": 340,
+   "tags": [
+    "best",
+    "flash"
+   ],
+   "img": "64GB Card",
+   "dark": true,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "stock": 120,
+   "sold": 3680,
+   "info": [
+    [
+     "bi-sd-card",
+     "64GB"
+    ],
+    [
+     "bi-speedometer2",
+     "Class 10 স্পিড"
+    ],
+    [
+     "bi-camera-video",
+     "ক্যামেরা রেডি"
+    ],
+    [
+     "bi-patch-check",
+     "আসল পণ্য"
+    ]
+   ]
+  },
+  {
+   "id": 6,
+   "type": "simple",
+   "name": "ক্যামেরা মাউন্ট (ওয়াল/সিলিং)",
+   "cat": "accessories",
+   "sku": "HC-MNT-1",
+   "regular": 550,
+   "sale": 450,
+   "rating": 4.5,
+   "reviews": 77,
+   "tags": [
+    "trending",
+    "best"
+   ],
+   "img": "Mount",
+   "dark": false,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "stock": 5,
+   "sold": 940,
+   "info": [
+    [
+     "bi-house-door",
+     "ওয়াল / সিলিং"
+    ],
+    [
+     "bi-arrows-angle-expand",
+     "৩৬০° অ্যাডজাস্টেবল"
+    ],
+    [
+     "bi-tools",
+     "সহজ ইন্সটলেশন"
+    ],
+    [
+     "bi-cloud-rain",
+     "আউটডোর রেডি"
+    ]
+   ]
+  },
+  {
+   "id": 7,
+   "type": "simple",
+   "name": "১০W সোলার প্যানেল",
+   "cat": "accessories",
+   "sku": "HC-SP-10",
+   "regular": 1500,
+   "sale": 1200,
+   "rating": 4.6,
+   "reviews": 49,
+   "tags": [
+    "new",
+    "flash"
+   ],
+   "img": "Solar Panel",
+   "dark": true,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "stock": 3,
+   "sold": 512,
+   "info": [
+    [
+     "bi-sun",
+     "১০W সোলার"
+    ],
+    [
+     "bi-battery-charging",
+     "5V/12V চার্জ"
+    ],
+    [
+     "bi-cloud-rain",
+     "ওয়াটারপ্রুফ"
+    ],
+    [
+     "bi-camera-video",
+     "ক্যামেরা সাপোর্ট"
+    ]
+   ]
+  },
+  {
+   "id": 8,
+   "type": "variable",
+   "name": "Wi-Fi স্মার্ট ইনডোর ক্যামেরা ২MP/৩MP",
+   "cat": "ip-camera",
+   "sku": "HC-IND-W",
+   "regular": 0,
+   "sale": 0,
+   "rating": 4.7,
+   "reviews": 93,
+   "tags": [
+    "trending",
+    "best"
+   ],
+   "img": "Indoor Cam",
+   "dark": false,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "variations": [
+    {
+     "label": "২MP",
+     "regular": 2300,
+     "sale": 1900
+    },
+    {
+     "label": "৩MP",
+     "regular": 2900,
+     "sale": 2500
+    },
+    {
+     "label": "৫MP",
+     "regular": 3600,
+     "sale": 3200
+    }
+   ],
+   "stock": 18,
+   "sold": 1175,
+   "fit": {
+    "place": [
+     "in"
+    ],
+    "power": [
+     "mains"
+    ],
+    "net": [
+     "wifi"
+    ]
+   },
+   "info": [
+    [
+     "bi-camera-video",
+     "1080p / 2K ভিডিও"
+    ],
+    [
+     "bi-wifi",
+     "WiFi / 4G সাপোর্ট"
+    ],
+    [
+     "bi-moon-stars",
+     "নাইট ভিশন"
+    ],
+    [
+     "bi-shield-check",
+     "১ বছর ওয়ারেন্টি"
+    ]
+   ]
+  },
+  {
+   "id": 9,
+   "type": "simple",
+   "name": "৮ চ্যানেল DVR + মোবাইল ভিউ",
+   "cat": "cc-camera",
+   "sku": "HC-DVR-8",
+   "regular": 7800,
+   "sale": 6900,
+   "rating": 4.5,
+   "reviews": 41,
+   "tags": [
+    "trending",
+    "new",
+    "flash"
+   ],
+   "img": "DVR 8CH",
+   "dark": true,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "stock": 9,
+   "sold": 398,
+   "fit": {
+    "place": [
+     "in",
+     "out"
+    ],
+    "power": [
+     "mains"
+    ],
+    "net": [
+     "wired"
+    ]
+   },
+   "info": [
+    [
+     "bi-camera-video",
+     "HD ভিডিও"
+    ],
+    [
+     "bi-hdd-network",
+     "DVR/NVR সাপোর্ট"
+    ],
+    [
+     "bi-moon-stars",
+     "নাইট ভিশন"
+    ],
+    [
+     "bi-shield-check",
+     "ওয়ারেন্টি সহ"
+    ]
+   ]
+  },
+  {
+   "id": 10,
+   "type": "grouped",
+   "name": "আউটডোর সিসি ক্যামেরা প্যাকেজ",
+   "cat": "cc-camera",
+   "sku": "HC-PKG-O",
+   "regular": 0,
+   "sale": 0,
+   "rating": 4.8,
+   "reviews": 66,
+   "tags": [
+    "best",
+    "new"
+   ],
+   "img": "CC Package",
+   "dark": false,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "children": [
+    {
+     "label": "২ ক্যামেরা প্যাকেজ",
+     "regular": 9500,
+     "sale": 8500
+    },
+    {
+     "label": "৪ ক্যামেরা প্যাকেজ",
+     "regular": 16500,
+     "sale": 14900
+    },
+    {
+     "label": "৮ ক্যামেরা প্যাকেজ",
+     "regular": 29000,
+     "sale": 26500
+    }
+   ],
+   "stock": 12,
+   "sold": 604,
+   "fit": {
+    "place": [
+     "out"
+    ],
+    "power": [
+     "mains"
+    ],
+    "net": [
+     "wired"
+    ]
+   },
+   "info": [
+    [
+     "bi-camera-video",
+     "HD ভিডিও"
+    ],
+    [
+     "bi-hdd-network",
+     "DVR/NVR সাপোর্ট"
+    ],
+    [
+     "bi-moon-stars",
+     "নাইট ভিশন"
+    ],
+    [
+     "bi-shield-check",
+     "ওয়ারেন্টি সহ"
+    ]
+   ]
+  },
+  {
+   "id": 11,
+   "type": "simple",
+   "name": "Mini WiFi Camera 1080p",
+   "cat": "ip-camera",
+   "sku": "HC-MINI-1",
+   "regular": 2200,
+   "sale": 1800,
+   "rating": 4.3,
+   "reviews": 120,
+   "tags": [
+    "best",
+    "flash",
+    "trending"
+   ],
+   "img": "Mini Cam",
+   "dark": true,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "stock": 60,
+   "sold": 1890,
+   "fit": {
+    "place": [
+     "in"
+    ],
+    "power": [
+     "mains"
+    ],
+    "net": [
+     "wifi"
+    ]
+   },
+   "info": [
+    [
+     "bi-camera-video",
+     "1080p / 2K ভিডিও"
+    ],
+    [
+     "bi-wifi",
+     "WiFi / 4G সাপোর্ট"
+    ],
+    [
+     "bi-moon-stars",
+     "নাইট ভিশন"
+    ],
+    [
+     "bi-shield-check",
+     "১ বছর ওয়ারেন্টি"
+    ]
+   ]
+  },
+  {
+   "id": 12,
+   "type": "external",
+   "name": "স্মার্টফোন গিম্বল স্ট্যাবিলাইজার",
+   "cat": "smartphone",
+   "sku": "HC-GIM-1",
+   "regular": 4200,
+   "sale": 3600,
+   "rating": 4.4,
+   "reviews": 22,
+   "tags": [
+    "new"
+   ],
+   "img": "Gimbal",
+   "dark": false,
+   "desc": "এই পণ্যটি উন্নত প্রযুক্তি ও দীর্ঘস্থায়ী মান নিশ্চিত করে তৈরি। ঘরে, দোকানে বা অফিসে সহজেই ব্যবহার করা যায়। অফিসিয়াল ওয়ারেন্টিসহ সারা বাংলাদেশে ডেলিভারি।",
+   "url": "https://example.com/affiliate/gimbal",
+   "btn": "অ্যাফিলিয়েট লিংকে দেখুন",
+   "stock": 0,
+   "sold": 143,
+   "info": [
+    [
+     "bi-phone",
+     "অ্যান্ড্রয়েড / iOS"
+    ],
+    [
+     "bi-battery-charging",
+     "দীর্ঘ ব্যাটারি"
+    ],
+    [
+     "bi-patch-check",
+     "আসল পণ্য"
+    ],
+    [
+     "bi-shield-check",
+     "ওয়ারেন্টি সহ"
+    ]
+   ]
+  }
+ ],
+ "addons": [
+  {
+   "id": 5,
+   "note": "এই ক্যামেরার জন্য রেকমেন্ডেড"
+  },
+  {
+   "id": 6,
+   "note": "সহজ আউটডোর ইন্সটলেশন"
+  },
+  {
+   "id": 7,
+   "note": "ক্যামেরা চালু রাখুন সবসময়"
+  }
+ ],
+ "bundles": [
+  {
+   "id": "b1",
+   "name": "সোলার ক্যামেরা কমপ্লিট সেটআপ",
+   "desc": "বিদ্যুৎ ছাড়া ২৪/৭ নজরদারি — ক্যামেরা, মেমোরি কার্ড ও মাউন্ট একসাথে।",
+   "off": 10,
+   "items": [
+    [
+     2
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ]
+   ]
+  },
+  {
+   "id": "b2",
+   "name": "ইনডোর WiFi স্টার্টার",
+   "desc": "ঘরের জন্য স্মার্ট ক্যামেরা + ৬৪GB কার্ড।",
+   "off": 7,
+   "items": [
+    [
+     8
+    ],
+    [
+     5
+    ]
+   ]
+  },
+  {
+   "id": "b3",
+   "name": "আউটডোর 4G + সোলার ব্যাকআপ",
+   "desc": "৪G PTZ ক্যামেরা, কার্ড, সোলার প্যানেল ও মাউন্ট।",
+   "off": 12,
+   "items": [
+    [
+     1
+    ],
+    [
+     5
+    ],
+    [
+     7
+    ],
+    [
+     6
+    ]
+   ]
+  }
+ ],
+ "warranty": [
+  {
+   "serial": "HC-PTZ-0001",
+   "phone": "01712345678",
+   "product": 1,
+   "date": "2026-02-10",
+   "months": 12
+  },
+  {
+   "serial": "HC-SOL-0420",
+   "phone": "01812345678",
+   "product": 2,
+   "date": "2025-09-01",
+   "months": 12
+  },
+  {
+   "serial": "HC-MC-1188",
+   "phone": "01912345678",
+   "product": 5,
+   "date": "2026-08-20",
+   "months": 6
+  }
+ ]
+}

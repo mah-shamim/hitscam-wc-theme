@@ -7,9 +7,9 @@ if ( ! hitscam_is_wc() ) {
 }
 
 /** পরিমাণ অনুযায়ী ছাড়ের শতাংশ */
-function hitscam_bulk_pct( $qty ) {
+function hitscam_bulk_pct( $qty, $pid = 0 ) {
 	$pct = 0;
-	foreach ( hitscam_bulk_tiers() as $t ) {
+	foreach ( hitscam_bulk_tiers( $pid ) as $t ) {
 		if ( $qty >= $t[0] ) {
 			$pct = $t[1];
 		}
@@ -18,8 +18,8 @@ function hitscam_bulk_pct( $qty ) {
 }
 
 /** পরের ধাপ: [min, pct] বা null */
-function hitscam_next_tier( $qty ) {
-	foreach ( hitscam_bulk_tiers() as $t ) {
+function hitscam_next_tier( $qty, $pid = 0 ) {
+	foreach ( hitscam_bulk_tiers( $pid ) as $t ) {
 		if ( $qty < $t[0] ) {
 			return $t;
 		}
@@ -31,12 +31,9 @@ add_action( 'woocommerce_cart_calculate_fees', function ( WC_Cart $cart ) {
 	if ( is_admin() && ! wp_doing_ajax() ) {
 		return;
 	}
-	if ( ! hitscam_bulk_tiers() ) {
-		return;
-	}
 	$discount = 0;
 	foreach ( $cart->get_cart() as $item ) {
-		$pct = hitscam_bulk_pct( (int) $item['quantity'] );
+		$pct = hitscam_bulk_pct( (int) $item['quantity'], (int) $item['product_id'] );
 		if ( $pct > 0 ) {
 			$discount += (float) $item['line_subtotal'] * $pct / 100;
 		}
@@ -48,10 +45,10 @@ add_action( 'woocommerce_cart_calculate_fees', function ( WC_Cart $cart ) {
 
 // কার্টে পরের ধাপের ইঙ্গিত
 add_filter( 'woocommerce_cart_item_name', function ( $name, $item ) {
-	if ( ! is_cart() || ! hitscam_bulk_tiers() ) {
+	if ( ! is_cart() || ! hitscam_bulk_tiers( (int) $item['product_id'] ) ) {
 		return $name;
 	}
-	$n = hitscam_next_tier( (int) $item['quantity'] );
+	$n = hitscam_next_tier( (int) $item['quantity'], (int) $item['product_id'] );
 	if ( $n ) {
 		$name .= '<div class="small text-success mt-1"><i class="bi bi-tag-fill"></i> আর ' . hitscam_bn_digits( $n[0] - (int) $item['quantity'] ) . ' পিস নিলে ' . hitscam_bn_digits( rtrim( rtrim( (string) $n[1], '0' ), '.' ) ) . '% ছাড়</div>';
 	}
@@ -59,8 +56,8 @@ add_filter( 'woocommerce_cart_item_name', function ( $name, $item ) {
 }, 10, 2 );
 
 // প্রোডাক্ট পেজে বাল্ক টেবিল (সিম্পল/ভ্যারিয়েবল)
-function hitscam_bulk_box() {
-	$t = hitscam_bulk_tiers();
+function hitscam_bulk_box( $pid = 0 ) {
+	$t = hitscam_bulk_tiers( $pid ?: (int) get_the_ID() );
 	if ( ! $t ) {
 		return;
 	}

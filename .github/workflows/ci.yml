@@ -1,0 +1,98 @@
+name: CI — WordPress theme + WooCommerce
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.1', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: none
+      - name: PHP syntax (theme + bundled plugins)
+        run: |
+          find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 -P4 php -l | grep -v '^No syntax errors' || true
+          ! find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l 2>&1 | grep -q '^\(Parse\|Fatal\)'
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: JS syntax
+        run: find assets bundled-plugins -name '*.js' -not -path '*/vendor/*' -print0 | xargs -0 -n1 node --check
+      - name: JSON validity
+        run: for f in $(find . -name '*.json' -not -path './.git/*'); do python3 -m json.tool "$f" >/dev/null || exit 1; done
+      - name: Version consistency (style.css == HITSCAM_VERSION)
+        run: |
+          A=$(grep -m1 '^Version:' style.css | awk '{print $2}')
+          B=$(grep -m1 "define( 'HITSCAM_VERSION'" functions.php | sed "s/.*'\([0-9.]*\)'.*/\1/")
+          echo "style.css=$A functions.php=$B"; [ "$A" = "$B" ]
+
+  wordpress:
+    name: WordPress ${{ matrix.wp }} + WooCommerce + theme/plugins
+    runs-on: ubuntu-latest
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        wp: ['latest']
+        php: ['8.2']
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wp
+        ports: ['3306:3306']
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli, gd, zip
+          tools: wp-cli
+      - name: Install WordPress + WooCommerce
+        run: |
+          mkdir wp && cd wp
+          wp core download --version=${{ matrix.wp }}
+          wp config create --dbname=wp --dbuser=root --dbpass=root --dbhost=127.0.0.1 --extra-php <<'PHP'
+          define('WP_DEBUG', true); define('WP_DEBUG_LOG', true); define('WP_DEBUG_DISPLAY', false);
+          PHP
+          wp core install --url=http://127.0.0.1:8080 --title=HitsCam --admin_user=admin --admin_password=pass --admin_email=a@example.com --skip-email
+          wp plugin install woocommerce --activate
+      - name: Install theme + bundled plugins
+        run: |
+          cd wp
+          rsync -a --exclude '.git' --exclude '.github' --exclude 'bundled-plugins' ../ wp-content/themes/hitscam/
+          for p in ../bundled-plugins/*/; do rsync -a "$p" wp-content/plugins/$(basename "$p")/; done
+          wp theme activate hitscam
+          wp plugin activate $(ls wp-content/plugins | grep '^hitscam-' | tr '\n' ' ')
+          wp eval 'echo "seeded products: ", count(wc_get_products(["limit"=>-1,"return"=>"ids"])), "\n";'
+      - name: Theme Check plugin
+        run: |
+          cd wp
+          wp plugin install theme-check --activate || true
+      - name: Smoke test (pages, no PHP fatals)
+        run: |
+          cd wp
+          wp rewrite structure '/%postname%/' --hard
+          php -S 127.0.0.1:8080 -t . >/tmp/server.log 2>&1 &
+          sleep 3
+          fail=0
+          for u in / /shop/ /cart/ /checkout/ /bundles/ /finder/ /blog/ /track-order/ /help/ /wp-login.php; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' -L "http://127.0.0.1:8080$u"); echo "$u -> $c"
+            case $c in 2*|3*) ;; *) fail=1;; esac
+          done
+          P=$(wp post list --post_type=product --field=ID --posts_per_page=1 --post_status=publish)
+          c=$(curl -s -o /dev/null -w '%{http_code}' -L "http://127.0.0.1:8080/?p=$P"); echo "product -> $c"; [ "$c" = 200 ] || fail=1
+          if [ -f wp-content/debug.log ] && grep -E 'PHP (Fatal|Parse)' wp-content/debug.log; then echo '::error::PHP fatal in debug.log'; fail=1; fi
+          exit $fail

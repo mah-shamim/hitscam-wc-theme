@@ -43,7 +43,7 @@
       .done(r => {
         if (r.success) {
           try { applyFragments(r.data); $(document.body).trigger('added_to_cart', [r.data.fragments, r.data.cart_hash, null]); } catch (e) { /* UI সমস্যা হলেও রিডাইরেক্ট চলবে */ }
-          if ($b.data('buy-now')) { location.assign(r.data.redirect || HCT.checkout || '/checkout/'); return; }
+          if ($b.data('buy-now')) { (window.HCOrder ? HCOrder.open() : location.assign(r.data.redirect || HCT.checkout || '/checkout/')); return; }
         } else toast((r.data && r.data.msg) || 'কার্টে যোগ করা যায়নি');
       }).fail(() => toast('নেটওয়ার্ক সমস্যা')).always(() => $b.prop('disabled', false));
   });

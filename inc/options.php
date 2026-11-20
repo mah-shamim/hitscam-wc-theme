@@ -45,8 +45,13 @@ function hitscam_darken( $hex, $amt ) {
 }
 
 /** বাল্ক ছাড়ের ধাপ: [ [min, pct], ... ] */
-function hitscam_bulk_tiers() {
+function hitscam_bulk_tiers( $pid = 0 ) {
 	$raw   = trim( (string) hitscam_opt( 'bulk', '5:3,10:6,20:10' ) );
+	if ( $pid ) { // পণ্য-ভিত্তিক: _hc_bulk মেটা ("5:3,10:6"; "off" = বন্ধ); ফাঁকা হলে গ্লোবাল
+		$m = trim( (string) get_post_meta( $pid, '_hc_bulk', true ) );
+		if ( 'off' === strtolower( $m ) ) { return array(); }
+		if ( '' !== $m ) { $raw = $m; }
+	}
 	$tiers = array();
 	foreach ( array_filter( array_map( 'trim', explode( ',', $raw ) ) ) as $t ) {
 		$p = explode( ':', $t );

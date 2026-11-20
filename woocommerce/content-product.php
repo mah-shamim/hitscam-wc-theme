@@ -46,11 +46,13 @@ $buyable = $product->is_type( 'grouped' ) ? (bool) array_filter( $vars, fn( $v )
 	<a class="pc-img" href="<?php the_permalink(); ?>"><?php echo wp_kses_post( $product->get_image( 'hitscam-card', array( 'loading' => 'lazy' ) ) ); ?></a>
 	<div class="pc-body">
 		<div class="pc-cat"><?php echo wp_kses_post( strip_tags( (string) $cats ) ); ?><?php echo $cats ? ' · ' : ''; ?><span class="text-muted"><?php echo esc_html( $type_lb[ $product->get_type() ] ?? ucfirst( $product->get_type() ) ); ?></span></div>
+		<?php if ( $product->is_type( 'grouped' ) ) : ?><span class="badge bg-dark type-badge">Grouped Product</span><?php endif; ?>
 		<a class="pc-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 		<div class="pc-rate"><?php echo wp_kses_post( wc_get_rating_html( $product->get_average_rating() ) ); ?> <span class="text-muted">(<?php echo esc_html( hitscam_bn_digits( $product->get_review_count() ) ); ?>)</span>
 			<?php if ( $sold > 0 ) : ?><span class="pc-sold" title="টোটাল সোল্ড"><i class="bi bi-bag-check-fill"></i> <?php echo esc_html( hitscam_bn_digits( $sold ) ); ?> বিক্রি</span><?php endif; ?></div>
 		<?php if ( $info ) : ?><ul class="pc-info"><?php foreach ( $info as $x ) : ?><li><i class="bi <?php echo esc_attr( $x[0] ); ?>"></i><span><?php echo esc_html( $x[1] ); ?></span></li><?php endforeach; ?></ul><?php endif; ?>
-		<?php if ( $vars ) : $gname = 'opt-' . $id . '-' . wp_rand( 100, 999 ); ?>
+		<?php if ( $vars && $product->is_type( 'grouped' ) ) : echo hitscam_group_rows( $vars, $lowest, true ); // phpcs:ignore
+		elseif ( $vars ) : $gname = 'opt-' . $id . '-' . wp_rand( 100, 999 ); ?>
 		<div class="pc-group" style="--n:<?php echo 4 === count( $vars ) ? 2 : min( count( $vars ), 3 ); ?>">
 			<?php foreach ( array_slice( $vars, 0, 6, true ) as $i => $v ) : ?>
 			<label class="<?php echo $v['stock'] ? '' : 'na'; ?>"><span><input type="radio" class="form-check-input opt-radio me-1" name="<?php echo esc_attr( $gname ); ?>" value="<?php echo (int) $i; ?>" data-vid="<?php echo (int) $v['id']; ?>" data-grp="<?php echo ! empty( $v['grp'] ) ? 1 : 0; ?>" data-child="<?php echo (int) ( $v['child'] ?? 0 ); ?>" data-html="<?php echo esc_attr( $v['html'] ); ?>" <?php checked( $i, $lowest ); ?> <?php disabled( ! $v['stock'] ); ?>><?php echo esc_html( $v['label'] ); ?></span><b><?php echo esc_html( hitscam_bn_digits( wc_format_decimal( $v['price'], 0 ) ) ); ?>৳</b></label>
@@ -58,7 +60,7 @@ $buyable = $product->is_type( 'grouped' ) ? (bool) array_filter( $vars, fn( $v )
 		</div>
 		<?php endif; ?>
 		<?php echo hitscam_stock_html( $product ); // phpcs:ignore ?>
-		<div class="pc-price"><?php echo wp_kses_post( $vars ? $vars[ $lowest ]['html'] : $product->get_price_html() ); ?></div>
+		<div class="pc-price"><?php echo wp_kses_post( $vars ? ( $product->is_type( 'grouped' ) ? '<span class="text-muted small">সিলেক্টেড: </span><b class="grp-sel">' . esc_html( hitscam_money( $vars[ $lowest ]['price'] ) ) . '</b>' : $vars[ $lowest ]['html'] ) : $product->get_price_html() ); ?></div>
 		<div class="pc-actions <?php echo $buyable && $in_cart ? 'three' : ''; ?>">
 			<?php if ( $buyable ) : ?>
 				<button class="btn btn-brand btn-add hc-add" type="button" data-product_id="<?php echo (int) $id; ?>"><?php esc_html_e( 'অ্যাড টু কার্ট', 'hitscam' ); ?></button>

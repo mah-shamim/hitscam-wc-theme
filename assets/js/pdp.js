@@ -68,7 +68,7 @@
     const extra = $('.up-chk:checked').map(function () { return $(this).data('id'); }).get();
     $btn && $btn.prop('disabled', true);
     S.post('hc_add', { product_id: pidAdd, variation_id: vid, quantity: qty(), attrs: at, extra, buy_now: buyNow ? 1 : 0 }).done(r => {
-      if (r.success) { try { S.applyFragments(r.data); $(document.body).trigger('added_to_cart', [r.data.fragments, r.data.cart_hash, null]); } catch (e) { /* UI আপডেটে সমস্যা হলেও অর্ডার নাউ চলবে */ } if (buyNow || r.data.redirect) { location.assign(r.data.redirect || HCT.checkout || '/checkout/'); } }
+      if (r.success) { try { S.applyFragments(r.data); $(document.body).trigger('added_to_cart', [r.data.fragments, r.data.cart_hash, null]); } catch (e) { /* UI আপডেটে সমস্যা হলেও অর্ডার নাউ চলবে */ } if (buyNow && window.HCOrder) { HCOrder.open(); } else if (buyNow || r.data.redirect) { location.assign(r.data.redirect || HCT.checkout || '/checkout/'); } }
       else toast((r.data && r.data.msg) || 'কার্টে যোগ করা যায়নি');
     }).always(() => $btn && $btn.prop('disabled', false));
   }

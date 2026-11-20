@@ -1,0 +1,41 @@
+/* e6 — WooCommerce চেকআউট → টেমপ্লেটের checkout.html স্টাইল */
+.hc-checkout .woocommerce-billing-fields>h3,.hc-checkout .woocommerce-additional-fields>h3,.hc-checkout #ship-to-different-address{font-size:1rem;font-weight:700;margin:1rem 0 .6rem}
+.hc-checkout .woocommerce-billing-fields>h3{display:none}
+.hc-checkout .form-row{margin:0 0 .85rem;padding:0;width:100%;float:none}
+.hc-checkout .form-row label{font-weight:600;font-size:.9rem;margin-bottom:.25rem;display:block}
+.hc-checkout .form-row .required{color:var(--brand);text-decoration:none}
+.hc-checkout .form-row .optional{color:var(--muted);font-weight:400}
+.hc-checkout input.input-text,.hc-checkout textarea,.hc-checkout select,.hc-checkout .select2-selection{width:100%;border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem;background:var(--card);color:var(--ink);min-height:44px}
+.hc-checkout input.input-text:focus,.hc-checkout textarea:focus,.hc-checkout select:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 .2rem var(--brand-soft)}
+.hc-checkout .woocommerce-invalid input.input-text,.hc-checkout .woocommerce-invalid select{border-color:#dc3545}
+@media(min-width:576px){.hc-checkout .form-row-first,.hc-checkout .form-row-last{width:calc(50% - .5rem);display:inline-block;vertical-align:top}.hc-checkout .form-row-first{margin-inline-end:1rem}}
+/* সামারি */
+#hc-summary table.shop_table{border:0;width:100%;border-collapse:collapse;margin:0 0 1rem}
+#hc-summary table.shop_table thead{display:none}
+#hc-summary table.shop_table td,#hc-summary table.shop_table th{border:0;border-bottom:1px dashed var(--line);padding:.55rem 0;background:none;font-weight:400;text-align:start;vertical-align:top}
+#hc-summary table.shop_table td:last-child,#hc-summary table.shop_table tfoot td{text-align:end}
+#hc-summary table.shop_table tfoot th{color:var(--muted)}
+#hc-summary table.shop_table tr.order-total th,#hc-summary table.shop_table tr.order-total td{font-weight:800;font-size:1.15rem;color:var(--ink);border-bottom:0}
+#hc-summary table.shop_table tr.order-total .amount{color:var(--brand)}
+#hc-summary .product-name{font-weight:600}
+/* পেমেন্ট = .pay-opt কার্ড */
+#payment{background:none;border-radius:0}
+#payment ul.payment_methods{list-style:none;margin:0 0 1rem;padding:0;border:0}
+#payment ul.payment_methods>li{border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem;margin-bottom:.45rem;background:var(--card)}
+#payment ul.payment_methods>li:has(>input:checked){border-color:var(--brand);background:var(--brand-soft)}
+#payment ul.payment_methods>li>input{margin-inline-end:.5rem;accent-color:var(--brand)}
+#payment ul.payment_methods>li>label{display:inline;font-weight:600;cursor:pointer}
+#payment div.payment_box{background:none;color:var(--muted);padding:.6rem 0 0;margin:0;font-size:.9rem}
+#payment div.payment_box::before{display:none}
+#payment .place-order{padding:0;background:none}
+#payment #place_order{width:100%;float:none;background:var(--brand);color:#fff;border:0;border-radius:50px;padding:.85rem 1rem;font-weight:700;font-size:1.05rem}
+#payment #place_order:hover{background:var(--brand-dark,var(--brand));filter:brightness(.92)}
+.woocommerce-privacy-policy-text{font-size:.82rem;color:var(--muted)}
+.hc-checkout .woocommerce-shipping-methods{list-style:none;padding:0;margin:0}
+.hc-checkout .woocommerce-shipping-methods li{display:flex;gap:.5rem;align-items:center}
+body.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info,body.woocommerce-checkout .woocommerce-form-login-toggle .woocommerce-info{margin-bottom:.8rem}
+/* পুরনো গ্রিড/বক্স নিয়ম বাতিল (wc.css) — নতুন .panel লেআউট */
+.woocommerce-checkout form.checkout.hc-checkout{display:block}
+.woocommerce-checkout #order_review.woocommerce-checkout-review-order{background:none;border:0;padding:0}
+.hc-checkout #payment ul.payment_methods>li{padding:.7rem .9rem}
+.hc-checkout #payment .payment_box input.input-text,.hc-checkout #payment .payment_box input[type=file]{width:100%}

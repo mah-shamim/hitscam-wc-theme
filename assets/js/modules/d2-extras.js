@@ -38,7 +38,7 @@ jQuery(function ($) {
     const rec = S.get('hc_recent_ids', []).filter(r => r !== id).slice(0, 3);
     if (id) { S.set('hc_recent_ids', [id].concat(S.get('hc_recent_ids', []).filter(r => r !== id)).slice(0, 8));
       $.post(HCT.ajax, { action: 'hc_coview', nonce: HCT.nonce, id, near: rec }).done(r => {
-        if (r.success && r.data) { const $a = $('.related.products, #related, .related-products').first(); const h = '<div class="section-head"><h2>অন্য ক্রেতারা এগুলোও দেখেছেন</h2></div>' + r.data; if ($a.length) $a.before(h); else $('.pi-scroll, .single-product').last().after(h); }
+        if (r.success && r.data) { const $a = $('.related.products, #related, .related-products').first(); const h = '<div class="section-head"><h2>অন্য ক্রেতারা এগুলোও দেখেছেন</h2></div>' + r.data; const $slot = $('.hc-coview-slot').first(); if ($slot.length) { $slot.html('<div class="section-head"><h2>' + esc($slot.data('title') || 'অন্য ক্রেতারা এগুলোও দেখেছেন') + '</h2></div>' + r.data); return; } if ($a.length) $a.before(h); else $('.pi-scroll, .single-product').last().after(h); }
       }); }
   }
 

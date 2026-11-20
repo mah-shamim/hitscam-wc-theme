@@ -1,0 +1,13 @@
+.grp-table{margin-bottom:.75rem}
+.grp-table td{padding:.5rem .35rem;vertical-align:middle}
+.grp-table .g-qty{width:120px}
+.grp-table .g-qty .qty{display:inline-flex;align-items:center;gap:.35rem}
+.grp-table .g-q{min-width:1.4em;text-align:center;font-weight:700}
+.grp-table tr.na{opacity:.55}
+.grp-compact{font-size:.78rem;margin:.35rem 0 .4rem}
+.grp-compact td{padding:.3rem .2rem}
+.grp-compact .g-name{line-height:1.25}
+.grp-compact .g-qty{width:92px}
+.grp-compact .qty-btn{width:22px;height:22px;font-size:.8rem;padding:0;line-height:1}
+.pc-body .type-badge{font-size:.62rem;margin-bottom:.25rem;align-self:flex-start}
+.pc-total{font-size:.78rem;color:var(--muted)}

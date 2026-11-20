@@ -254,7 +254,7 @@ function hitscam_ajax_reconfirm() {
 		$o->add_order_note( 'গ্রাহক অর্ডার রিকনফার্ম করেছেন (অর্ডার রিসিভড পেজ থেকে)।' );
 		$o->save();
 		do_action( 'hitscam_order_reconfirmed', $o );
-		do_action( 'hitscam_send_sms', $o->get_billing_phone(), 'HitsCam: ধন্যবাদ! আপনার অর্ডার #' . $o->get_order_number() . ' রিকনফার্ম হয়েছে। শীঘ্রই প্যাকেজিং শুরু হবে।', $o );
+		hitscam_try_sms( $o->get_billing_phone(), 'HitsCam: ধন্যবাদ! আপনার অর্ডার #' . $o->get_order_number() . ' রিকনফার্ম হয়েছে। শীঘ্রই প্যাকেজিং শুরু হবে।' );
 	}
 	wp_send_json_success();
 }
@@ -265,7 +265,7 @@ function hitscam_ajax_resend_sms() {
 	$last = (int) $o->get_meta( '_hc_sms_last' );
 	if ( time() - $last < 15 ) { wp_send_json_error( array( 'msg' => 'একটু পরে আবার চেষ্টা করুন।' ) ); }
 	$o->update_meta_data( '_hc_sms_last', time() ); $o->save();
-	do_action( 'hitscam_send_sms', $o->get_billing_phone(), 'HitsCam: আপনার অর্ডার #' . $o->get_order_number() . ' গ্রহণ করা হয়েছে। আমাদের প্রতিনিধি কল করবেন।', $o );
+	hitscam_try_sms( $o->get_billing_phone(), 'HitsCam: আপনার অর্ডার #' . $o->get_order_number() . ' গ্রহণ করা হয়েছে। আমাদের প্রতিনিধি কল করবেন।' );
 	wp_send_json_success();
 }
 add_action( 'wp_ajax_hc_reorder', 'hitscam_ajax_reorder' );

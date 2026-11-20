@@ -1,0 +1,5 @@
+/* checkout iframe-এর ভেতরে (hc_modal=1): হেডার/ফুটার/ফ্লোট লুকানো */
+body.hc-in-modal .topbar,body.hc-in-modal #site-header,body.hc-in-modal header.site-header,body.hc-in-modal footer,body.hc-in-modal .site-footer,body.hc-in-modal .wa-float,body.hc-in-modal .mobile-dock,body.hc-in-modal #wpadminbar,body.hc-in-modal .breadcrumb-wrap,body.hc-in-modal .page-title,body.hc-in-modal .hc-consent,body.hc-in-modal .hc-install,body.hc-in-modal .hc-offline{display:none!important}
+body.hc-in-modal{padding-top:0!important;margin-top:0!important;background:var(--bs-light-bg-subtle,#f8f9fa)}
+html.hc-in-modal{margin-top:0!important}
+#orderModal .modal-body{overflow:auto}

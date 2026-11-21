@@ -78,4 +78,5 @@ add_filter( 'woocommerce_billing_fields', function ( $f ) {
 	if ( isset( $f['billing_phone'] ) ) { $f['billing_phone']['required'] = true; $f['billing_phone']['label'] = 'মোবাইল নাম্বার'; $f['billing_phone']['priority'] = 25; }
 	return $f;
 }, 99 );
-add_action( 'wp_head', function () { echo '<script>window.HC_VERIFY=' . wp_json_encode( get_option( 'hitscam_verify', 'required' ) ) . ';</script>'; }, 1 );
+add_action( 'wp_head', function () { $vch = array(); if ( function_exists( 'hitscam_channels' ) ) { if ( function_exists( 'hitscam_sms_ready' ) && hitscam_sms_ready() ) { $vch[] = array( 'key' => 'sms', 'label' => 'SMS', 'icon' => 'bi-chat-dots' ); } foreach ( hitscam_channels( 'verify' ) as $c ) { $vch[] = array( 'key' => $c['key'], 'label' => $c['label'], 'icon' => $c['icon'] ); } }
+	echo '<script>window.HC_VERIFY=' . wp_json_encode( get_option( 'hitscam_verify', 'required' ) ) . ';window.HC_VCH=' . wp_json_encode( $vch ) . ';</script>'; }, 1 );

@@ -68,7 +68,7 @@ jobs:
           define('WP_DEBUG', true); define('WP_DEBUG_LOG', true); define('WP_DEBUG_DISPLAY', false);
           PHP
           wp core install --url=http://127.0.0.1:8080 --title=HitsCam --admin_user=admin --admin_password=pass --admin_email=a@example.com --skip-email
-          wp plugin install woocommerce --activate
+          wp plugin install woocommerce --activate --quiet
       - name: Install theme + bundled plugins
         run: |
           cd wp
@@ -80,13 +80,20 @@ jobs:
       - name: Theme Check plugin
         run: |
           cd wp
-          wp plugin install theme-check --activate || true
+          wp plugin install theme-check --activate --quiet || true
       - name: Smoke test (pages, no PHP fatals)
         run: |
           cd wp
-          wp rewrite structure '/%postname%/' --hard
-          php -S 127.0.0.1:8080 -t . >/tmp/server.log 2>&1 &
-          sleep 3
+          wp rewrite structure '/%postname%/' --quiet && wp rewrite flush --quiet
+          cat > router.php <<'PHP'
+          <?php
+          $u = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+          if ( '/' !== $u && is_file( __DIR__ . $u ) ) { return false; }
+          $_SERVER['SCRIPT_NAME'] = '/index.php';
+          require __DIR__ . '/index.php';
+          PHP
+          php -S 127.0.0.1:8080 router.php >/tmp/server.log 2>&1 &
+          for i in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null http://127.0.0.1:8080/ && break; sleep 2; done
           fail=0
           for u in / /shop/ /cart/ /checkout/ /bundles/ /finder/ /blog/ /track-order/ /help/ /wp-login.php; do
             c=$(curl -s -o /dev/null -w '%{http_code}' -L "http://127.0.0.1:8080$u"); echo "$u -> $c"

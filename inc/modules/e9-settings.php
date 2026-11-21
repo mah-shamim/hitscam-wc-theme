@@ -88,7 +88,7 @@ function hitscam_e9_pay_admin() {
 	echo '<table class="widefat striped"><thead><tr><th>দেখান</th><th>মেথড</th><th>টাইটেল</th><th>বর্ণনা</th><th>আইকন</th><th>ক্রম</th></tr></thead><tbody>';
 	$i = 0;
 	foreach ( $gws as $id => $g ) {
-		$c = $cfg[ $id ] ?? array( 'on' => 'yes' === $g->enabled ? 1 : 0, 'title' => '', 'desc' => '', 'icon' => '', 'order' => $i * 10 ); $i++;
+		$c = $cfg[ $id ] ?? array( 'on' => 1, 'title' => '', 'desc' => '', 'icon' => '', 'order' => $i * 10 ); $i++;
 		echo '<tr><td><input type="checkbox" name="pm[' . esc_attr( $id ) . '][on]" value="1"' . checked( ! empty( $c['on'] ), true, false ) . '></td><td><b>' . esc_html( $g->get_method_title() ) . '</b><br><code>' . esc_html( $id ) . '</code>' . ( 'yes' === $g->enabled ? '' : '<br><small>(WooCommerce-এ বন্ধ)</small>' ) . '</td>';
 		echo '<td><input type="text" class="regular-text" name="pm[' . esc_attr( $id ) . '][title]" value="' . esc_attr( $c['title'] ) . '" placeholder="' . esc_attr( $g->get_title() ) . '"></td><td><textarea rows="2" name="pm[' . esc_attr( $id ) . '][desc]" style="width:100%">' . esc_textarea( $c['desc'] ) . '</textarea></td><td><input type="text" size="12" name="pm[' . esc_attr( $id ) . '][icon]" value="' . esc_attr( $c['icon'] ) . '"></td><td><input type="number" style="width:70px" name="pm[' . esc_attr( $id ) . '][order]" value="' . esc_attr( (int) $c['order'] ) . '"></td></tr>';
 	}
@@ -98,6 +98,7 @@ add_filter( 'woocommerce_available_payment_gateways', function ( $gws ) {
 	if ( is_admin() && ! wp_doing_ajax() ) { return $gws; }
 	$cfg = (array) get_option( 'hitscam_pay_cfg', array() );
 	if ( ! $cfg ) { return $gws; }
+	$orig = $gws;
 	foreach ( $gws as $id => $g ) {
 		$c = $cfg[ $id ] ?? null; if ( ! $c ) { continue; }
 		if ( empty( $c['on'] ) ) { unset( $gws[ $id ] ); continue; }
@@ -105,6 +106,7 @@ add_filter( 'woocommerce_available_payment_gateways', function ( $gws ) {
 		if ( '' !== $c['desc'] ) { $g->description = $c['desc']; }
 		if ( '' !== $c['icon'] ) { $g->icon = ''; $g->hc_icon = $c['icon']; }
 	}
+	if ( ! $gws ) { return $orig; } // সব বন্ধ হয়ে গেলে ফলব্যাক: WooCommerce-এর তালিকা
 	uasort( $gws, function ( $a, $b ) use ( $cfg ) { return (int) ( $cfg[ $a->id ]['order'] ?? 999 ) <=> (int) ( $cfg[ $b->id ]['order'] ?? 999 ); } );
 	return $gws;
 }, 99 );
@@ -112,6 +114,10 @@ add_filter( 'woocommerce_gateway_icon', function ( $icon, $id ) {
 	$cfg = (array) get_option( 'hitscam_pay_cfg', array() );
 	return ! empty( $cfg[ $id ]['icon'] ) ? '<i class="bi ' . esc_attr( $cfg[ $id ]['icon'] ) . ' text-brand ms-1"></i>' : $icon;
 }, 10, 2 );
+
+add_action( 'init', function () { // ভুল ডিফল্টে সেভ হওয়া পুরনো কনফিগ একবার রিসেট
+	if ( (int) get_option( 'hitscam_pay_cfg_v', 0 ) < 2 ) { delete_option( 'hitscam_pay_cfg' ); update_option( 'hitscam_pay_cfg_v', 2 ); }
+} );
 
 /* ---------- টোটাল বিক্রি: অ্যাডমিন-নির্বাচিত স্ট্যাটাসের যোগফল ---------- */
 function hitscam_sales_statuses() {

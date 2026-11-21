@@ -1,34 +1,61 @@
-/* e7 — চেকআউটে ফোন ভেরিফাই: SMS কোড (গেটওয়ে থাকলে) অথবা WhatsApp/IMO ইত্যাদি চ্যানেল */
+/* e7 — চেকআউটে "প্লেস অর্ডার" চাপলে ফোন-ভেরিফাই পপআপ: SMS/WhatsApp/IMO… বেছে OTP → যাচাই → অর্ডার সম্পন্ন */
 jQuery(function ($) {
   const toast = (m) => (window.HCT_toast ? HCT_toast(m) : null);
-  const mount = () => {
-    if (window.HC_VERIFY === 'off') return;
-    const $ph = $('#billing_phone'); if (!$ph.length || $('#hcVerify').length) return;
-    $ph.closest('.form-row').after('<div id="hcVerify" class="mb-3 small"><button type="button" class="btn btn-soft btn-sm rounded-pill" id="hcVBtn"><i class="bi bi-shield-check"></i> ফোন ভেরিফাই করুন</button> <span id="hcVState" class="ms-1 text-muted"></span><div id="hcVBox" class="mt-2" style="display:none"></div></div>');
-  };
+  const mode = () => window.HC_VERIFY || 'required';
   const phone = () => $.trim($('#billing_phone').val());
-  const ok = (via) => { $('#hcVState').html('<span class="text-success"><i class="bi bi-check-circle-fill"></i> ভেরিফাইড' + (via ? ' (' + via + ')' : '') + '</span>'); $('#hcVBox').hide(); $('#hcVBtn').hide(); };
-  $(document).on('click', '#hcVBtn', function () {
-    $.post(HCT.ajax, { action: 'hc_vsend', nonce: HCT.nonce, phone: phone() }).done(r => {
-      if (!r.success) { toast((r.data && r.data.msg) || 'নাম্বার ঠিক নেই'); return; }
-      const d = r.data; let h = '';
-      if (d.mode === 'sms') h += '<div class="mb-2">আপনার মোবাইলে ৬ সংখ্যার কোড পাঠানো হয়েছে।</div>';
-      else h += '<div class="mb-2">নিচের অ্যাপে মেসেজটি পাঠান — আমাদের টিম কোড জানাবে, অথবা পাঠিয়েছেন জানিয়ে এগিয়ে যান।</div><div class="d-flex flex-wrap gap-2 mb-2">' + d.html + '</div>';
-      h += '<div class="input-group input-group-sm" style="max-width:320px"><input class="form-control" id="hcVCode" inputmode="numeric" maxlength="6" placeholder="৬ সংখ্যার কোড"><button type="button" class="btn btn-brand" id="hcVCheck">যাচাই</button></div>';
-      if (d.mode !== 'sms') h += '<button type="button" class="btn btn-link btn-sm px-0" id="hcVClaim">আমি মেসেজ পাঠিয়েছি</button>';
-      $('#hcVBox').html(h).show();
-    });
+  let okPhone = ''; let modal = null, busy = false;
+
+  const build = () => {
+    if (document.getElementById('vfModal')) return;
+    $('body').append('<div class="modal fade" id="vfModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">' +
+      '<div class="modal-header"><h5 class="modal-title fw-bold"><i class="bi bi-shield-check text-brand"></i> ফোন নাম্বার ভেরিফাই</h5><button class="btn-close" data-bs-dismiss="modal" aria-label="বন্ধ"></button></div>' +
+      '<div class="modal-body"><p class="mb-2">অর্ডার সম্পন্ন করতে <b id="vfPh"></b> নাম্বারটি যাচাই করুন। কোথায় কোড পেতে চান?</p><div class="btn-row mb-3" id="vfBtns"></div>' +
+      '<div id="vfInfo" class="small text-muted mb-2"></div><div id="vfCodeBox" style="display:none"><div class="input-group"><input class="form-control form-control-lg text-center" id="vfCode" inputmode="numeric" maxlength="6" placeholder="৬ সংখ্যার OTP" autocomplete="one-time-code"><button type="button" class="btn btn-brand btn-lg" id="vfCheck">যাচাই করুন</button></div><div class="small text-danger mt-1" id="vfErr"></div></div>' +
+      '<div id="vfManual" style="display:none" class="mt-2"></div></div></div></div></div>');
+  };
+  const open = () => {
+    build(); $('#vfPh').text(phone()); $('#vfCodeBox,#vfManual').hide(); $('#vfInfo,#vfErr').text(''); $('#vfCode').val('');
+    const chans = window.HC_VCH || [];
+    $('#vfBtns').html(chans.map(c => '<button type="button" class="btn btn-soft btn-lg rounded-pill vf-ch" data-ch="' + c.key + '"><i class="bi ' + c.icon + '"></i> ' + c.label + '</button>').join(''));
+    modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('vfModal')); modal.show();
+  };
+
+  /* প্লেস অর্ডার আটকানো: ভেরিফাইড না হলে পপআপ */
+  $('form.checkout').on('checkout_place_order', function () {
+    if (mode() === 'off' || !$('#billing_phone').length) return true;
+    if (okPhone && okPhone === phone()) return true;
+    if (!/^(?:\+?88)?01[3-9]\d{8}$/.test(phone().replace(/[\s-]/g, ''))) return true; // ফিল্ড ভুল হলে WooCommerce নিজেই এরর দেখাবে
+    if (busy) return false; busy = true;
+    $.post(HCT.ajax, { action: 'hc_vcheck', nonce: HCT.nonce, kind: 'status', phone: phone() }).done(r => {
+      busy = false;
+      if (r.success && r.data.ok) { okPhone = phone(); $('form.checkout').trigger('submit'); } else open();
+    }).fail(() => { busy = false; open(); });
+    return false;
   });
-  $(document).on('click', '#hcVCheck', function () {
-    $.post(HCT.ajax, { action: 'hc_vcheck', nonce: HCT.nonce, phone: phone(), code: $('#hcVCode').val() }).done(r => { if (r.success) ok('কোড'); else toast((r.data && r.data.msg) || 'কোড মেলেনি'); });
+  $(document).on('input change', '#billing_phone', function () { if (okPhone !== phone()) okPhone = ''; });
+
+  $(document).on('click', '.vf-ch', function () {
+    const $b = $(this).prop('disabled', true), ch = $b.data('ch');
+    $.post(HCT.ajax, { action: 'hc_vsend', nonce: HCT.nonce, phone: phone(), ch }).done(r => {
+      $b.prop('disabled', false);
+      if (!r.success) { $('#vfInfo').addClass('text-danger').text((r.data && r.data.msg) || 'পাঠানো যায়নি'); return; }
+      const d = r.data; $('#vfInfo').removeClass('text-danger'); $('.vf-ch').removeClass('btn-brand').addClass('btn-soft'); $b.removeClass('btn-soft').addClass('btn-brand');
+      $('#vfCodeBox').show(); setTimeout(() => $('#vfCode').trigger('focus'), 100);
+      if (d.mode === 'sent') { $('#vfInfo').text('OTP পাঠানো হয়েছে (' + d.via + ')। নিচে কোডটি দিন।'); $('#vfManual').hide(); }
+      else {
+        $('#vfInfo').text(d.via + '-এ আমাদের নাম্বারে অনুরোধ পাঠান; টিম OTP জানাবে। কোড পেলে নিচে বসান।');
+        $('#vfManual').html('<a class="btn btn-brand rounded-pill" target="_blank" rel="noopener" href="' + d.link + '"><i class="bi bi-box-arrow-up-right"></i> ' + d.via + ' খুলুন</a>' + (d.soft ? ' <button type="button" class="btn btn-link" id="vfClaim">আমি মেসেজ পাঠিয়েছি, এগিয়ে যান</button>' : '')).show();
+      }
+    }).fail(() => $b.prop('disabled', false));
   });
-  $(document).on('click', '#hcVClaim', function () {
-    $.post(HCT.ajax, { action: 'hc_vcheck', nonce: HCT.nonce, kind: 'claim', phone: phone() }).done(r => { if (r.success) ok('চ্যানেল'); else toast((r.data && r.data.msg) || 'এখন সম্ভব নয়'); });
+  const done = () => { okPhone = phone(); modal && modal.hide(); toast('ভেরিফাই সফল ✓ — অর্ডার সম্পন্ন হচ্ছে'); setTimeout(() => $('form.checkout').trigger('submit'), 350); };
+  $(document).on('click', '#vfCheck', function () {
+    $.post(HCT.ajax, { action: 'hc_vcheck', nonce: HCT.nonce, phone: phone(), code: $('#vfCode').val() }).done(r => { if (r.success) done(); else $('#vfErr').text((r.data && r.data.msg) || 'কোড মেলেনি'); });
   });
-  $(document).on('input change', '#billing_phone', function () {
-    $.post(HCT.ajax, { action: 'hc_vcheck', nonce: HCT.nonce, kind: 'status', phone: phone() }).done(r => { if (r.success && r.data.ok) ok(''); else { $('#hcVState').empty(); $('#hcVBtn').show(); } });
+  $(document).on('keydown', '#vfCode', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#vfCheck').trigger('click'); } });
+  $(document).on('click', '#vfClaim', function () {
+    $.post(HCT.ajax, { action: 'hc_vcheck', nonce: HCT.nonce, kind: 'claim', phone: phone() }).done(r => { if (r.success) done(); else $('#vfErr').text((r.data && r.data.msg) || 'এখন সম্ভব নয়'); });
   });
-  mount(); $(document.body).on('updated_checkout', mount);
 });
 
 /* সাবস্ক্রাইব ফর্ম (হোম) */

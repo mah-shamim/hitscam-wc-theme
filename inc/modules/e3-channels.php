@@ -132,13 +132,22 @@ function hitscam_e3_ajax_vsend() {
 	check_ajax_referer( 'hitscam', 'nonce' );
 	$ph = hitscam_normalize_bd_phone( wp_unslash( $_POST['phone'] ?? '' ) );
 	if ( ! $ph ) { wp_send_json_error( array( 'msg' => 'সঠিক মোবাইল নাম্বার দিন।' ) ); }
-	if ( ! hitscam_a2_limit( 'vsend', 6, 900 ) ) { wp_send_json_error( array( 'msg' => 'অনেকবার চেষ্টা হয়েছে, কিছুক্ষণ পরে চেষ্টা করুন।' ) ); }
+	if ( ! hitscam_a2_limit( 'vsend', 8, 900 ) ) { wp_send_json_error( array( 'msg' => 'অনেকবার চেষ্টা হয়েছে, কিছুক্ষণ পরে চেষ্টা করুন।' ) ); }
+	$ch   = sanitize_key( $_POST['ch'] ?? '' );
 	$code = (string) wp_rand( 100000, 999999 );
 	set_transient( 'hc_vc_' . md5( $ph ), $code, 10 * MINUTE_IN_SECONDS );
-	$msg = 'HitsCam ভেরিফিকেশন কোড: ' . $code;
-	if ( 'sms' === hitscam_msg_mode() && hitscam_try_sms( $ph, $msg ) ) { wp_send_json_success( array( 'mode' => 'sms' ) ); }
-	$text = 'HitsCam verify ' . $code . ' (' . $ph . ')';
-	wp_send_json_success( array( 'mode' => 'channel', 'code' => $code, 'html' => hitscam_channel_buttons( 'verify', $text, $ph ) ) );
+	$msg = 'HitsCam ভেরিফিকেশন কোড: ' . $code . ' (১০ মিনিট বৈধ)';
+	if ( 'sms' === $ch || '' === $ch ) {
+		if ( hitscam_try_sms( $ph, $msg ) ) { wp_send_json_success( array( 'mode' => 'sent', 'via' => 'SMS' ) ); }
+		if ( 'sms' === $ch ) { wp_send_json_error( array( 'msg' => 'SMS গেটওয়ে যুক্ত নেই — অন্য মাধ্যম বেছে নিন।' ) ); }
+	}
+	$chs = hitscam_channels( 'verify' ); $c = $chs[ $ch ] ?? null;
+	if ( ! $c ) { wp_send_json_error( array( 'msg' => 'মাধ্যম পাওয়া যায়নি।' ) ); }
+	// ইন্টিগ্রেশন হুক: WhatsApp Cloud API / IMO গেটওয়ে যুক্ত থাকলে true ফেরত দিলে সরাসরি পৌঁছে যায়
+	if ( apply_filters( 'hitscam_send_channel', false, $ch, $ph, $msg, $c ) ) { wp_send_json_success( array( 'mode' => 'sent', 'via' => $c['label'] ) ); }
+	// গেটওয়ে নেই: গ্রাহক শপের নাম্বারে অনুরোধ পাঠায়, টিম কোড জানায় (অথবা অ্যাডমিন সফট-ভেরিফাই চালু রাখলে "পাঠিয়েছি")
+	$text = 'HitsCam verify request: ' . $ph;
+	wp_send_json_success( array( 'mode' => 'manual', 'via' => $c['label'], 'link' => hitscam_channel_link( $c, $text, $ph ), 'soft' => ! get_option( 'hitscam_verify_hard' ) ) );
 }
 add_action( 'wp_ajax_hc_vsend', 'hitscam_e3_ajax_vsend' );
 add_action( 'wp_ajax_nopriv_hc_vsend', 'hitscam_e3_ajax_vsend' );

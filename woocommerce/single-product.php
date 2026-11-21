@@ -29,7 +29,7 @@ while ( have_posts() ) :
 	$buyable  = $grouped ? (bool) array_filter( $vars, fn( $v ) => $v['stock'] ) : ( $product->is_purchasable() && ( $product->is_type( 'simple' ) || $product->is_type( 'variable' ) ) );
 	$ext      = $product->is_type( 'external' );
 	$q_in     = hitscam_in_cart_qty( $pid );
-	$wa       = preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801614747054' ) );
+	$wa       = preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801953073445' ) );
 	$attrs    = array();
 	if ( $product->is_type( 'variable' ) ) {
 		foreach ( $product->get_variation_attributes() as $an => $opts ) {

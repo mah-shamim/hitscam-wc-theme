@@ -3,8 +3,8 @@
 defined( 'ABSPATH' ) || exit;
 $u   = wp_get_current_user(); $uid = $u->ID;
 $orders = wc_get_orders( array( 'customer_id' => $uid, 'limit' => 50, 'orderby' => 'date', 'order' => 'DESC' ) );
-$active = array_filter( $orders, fn( $o ) => $o->has_status( array( 'pending', 'processing', 'on-hold', 'shipped', 'out-for-delivery' ) ) );
-$spent  = array_sum( array_map( fn( $o ) => $o->has_status( array( 'completed', 'processing', 'shipped' ) ) ? (float) $o->get_total() : 0, $orders ) );
+$active = array_filter( $orders, fn( $o ) => $o->has_status( array( 'pending', 'processing', 'ready-to-ship', 'on-hold', 'shipped', 'out-for-delivery' ) ) );
+$spent  = array_sum( array_map( fn( $o ) => $o->has_status( array( 'completed', 'processing', 'ready-to-ship', 'shipped' ) ) ? (float) $o->get_total() : 0, $orders ) );
 $pts    = function_exists( 'hitscam_points' ) ? hitscam_points( $uid ) : 0;
 $ref    = function_exists( 'hitscam_ref_code' ) ? hitscam_ref_code( $uid ) : '';
 $bn     = fn( $n ) => hitscam_bn_digits( $n );

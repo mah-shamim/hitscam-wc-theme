@@ -188,7 +188,7 @@ add_filter( 'woocommerce_available_payment_gateways', function ( $g ) {
 function hitscam_a2_guard_message( $phone, $method, $total ) {
 	$c = hitscam_a2_guard_cfg();
 	if ( $phone && $c['max'] > 0 ) {
-		$n = count( wc_get_orders( array( 'billing_phone' => $phone, 'date_created' => '>' . ( time() - DAY_IN_SECONDS ), 'limit' => $c['max'], 'return' => 'ids', 'status' => array( 'pending', 'processing', 'on-hold', 'completed' ) ) ) );
+		$n = count( wc_get_orders( array( 'billing_phone' => $phone, 'date_created' => '>' . ( time() - DAY_IN_SECONDS ), 'limit' => $c['max'], 'return' => 'ids', 'status' => array( 'pending', 'processing', 'ready-to-ship', 'on-hold', 'completed' ) ) ) );
 		if ( $n >= $c['max'] ) { return 'এই নাম্বার থেকে ২৪ ঘণ্টায় সর্বোচ্চ ' . hitscam_bn_digits( $c['max'] ) . 'টি অর্ডার নেওয়া হয়। সমস্যা হলে WhatsApp এ জানান।'; }
 	}
 	if ( 'cod' === $method && $c['above'] > 0 && $total >= $c['above'] ) { return '৳' . number_format_i18n( $c['above'] ) . '+ অর্ডারে "অগ্রিমসহ ক্যাশ অন ডেলিভারি" বা অনলাইন পেমেন্ট বেছে নিন।'; }

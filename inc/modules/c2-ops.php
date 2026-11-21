@@ -38,7 +38,7 @@ add_action( 'admin_menu', function () {
 } );
 
 function hitscam_ops_sum( $after ) {
-	$ids = wc_get_orders( array( 'limit' => -1, 'status' => array( 'processing', 'completed', 'on-hold' ), 'date_created' => '>=' . $after, 'return' => 'objects' ) ); $t = 0;
+	$ids = wc_get_orders( array( 'limit' => -1, 'status' => array( 'processing', 'ready-to-ship', 'completed', 'on-hold' ), 'date_created' => '>=' . $after, 'return' => 'objects' ) ); $t = 0;
 	foreach ( $ids as $o ) { $t += (float) $o->get_total(); }
 	return array( count( $ids ), $t, $ids );
 }

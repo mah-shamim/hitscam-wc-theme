@@ -28,7 +28,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		'cartUrl'  => hitscam_is_wc() ? wc_get_cart_url() : '',
 		'checkout' => hitscam_is_wc() ? wc_get_checkout_url() : '',
 		'currency' => hitscam_is_wc() ? html_entity_decode( get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8' ) : '৳',
-		'wa'       => preg_replace( '/\D/', '', (string) hitscam_opt( 'whatsapp', '8801614747054' ) ),
+		'wa'       => preg_replace( '/\D/', '', (string) hitscam_opt( 'whatsapp', '8801953073445' ) ),
 		'i18n'     => array(
 			'added'    => __( 'কার্টে যোগ হয়েছে ✓', 'hitscam' ),
 			'wishAdd'  => __( 'উইশলিস্টে যোগ হয়েছে', 'hitscam' ),

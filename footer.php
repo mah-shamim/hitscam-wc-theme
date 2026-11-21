@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 $phone = hitscam_opt( 'phone', '+880 1614-747054' );
 $tel   = preg_replace( '/[^\d+]/', '', $phone );
-$wa    = preg_replace( '/\D/', '', (string) hitscam_opt( 'whatsapp', '8801614747054' ) );
+$wa    = preg_replace( '/\D/', '', (string) hitscam_opt( 'whatsapp', '8801953073445' ) );
 $wc    = hitscam_is_wc();
 $ids   = (array) get_option( 'hitscam_page_ids', array() );
 $link  = fn( $slug, $label ) => ! empty( $ids[ $slug ] ) ? '<a href="' . esc_url( get_permalink( $ids[ $slug ] ) ) . '">' . esc_html( $label ) . '</a>' : '';

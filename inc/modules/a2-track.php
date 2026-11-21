@@ -70,7 +70,7 @@ function hitscam_a2_order_payload( WC_Order $o ) {
 	return array(
 		'id' => $o->get_order_number(), 'oid' => $o->get_id(), 'date' => wc_format_datetime( $o->get_date_created(), 'F j, Y' ),
 		'total' => hitscam_a2_money( $o->get_total() ), 'pay' => ( $o->get_payment_method_title() ?: '—' ),
-		'status' => 'cancelled' === $status ? 'Cancelled' : ( $o->get_meta( '_hc_reconfirmed' ) && 'processing' === $status ? 'Confirmed' : wc_get_order_status_name( $status ) ),
+		'status' => 'cancelled' === $status ? 'Cancelled' : ( wc_get_order_status_name( $status ) ),
 		'cancelled' => 'cancelled' === $status, 'cur' => $cur, 'courier' => $cr, 'items' => $items,
 		'sub' => hitscam_a2_money( $o->get_subtotal() ), 'ship' => (float) $o->get_shipping_total() > 0 ? hitscam_a2_money( $o->get_shipping_total() ) : 'Free shipping',
 		'manage' => $left, 'cancelReason' => (string) $o->get_meta( '_hc_cancel_reason' ),
@@ -81,7 +81,7 @@ function hitscam_a2_order_payload( WC_Order $o ) {
 
 /** বাকি মিনিট (বাতিল/বদল সম্ভব হলে >0, নইলে 0) */
 function hitscam_a2_cancel_left( WC_Order $o ) {
-	if ( ! in_array( $o->get_status(), array( 'pending', 'processing', 'on-hold' ), true ) || $o->get_meta( '_hc_consignment' ) ) { return 0; }
+	if ( ! in_array( $o->get_status(), array( 'pending', 'processing', 'ready-to-ship', 'on-hold' ), true ) || $o->get_meta( '_hc_consignment' ) ) { return 0; }
 	$w = hitscam_a2_window(); $t = $o->get_date_created() ? $o->get_date_created()->getTimestamp() : 0;
 	return (int) max( 0, ceil( ( $w * 60 - ( time() - $t ) ) / 60 ) );
 }

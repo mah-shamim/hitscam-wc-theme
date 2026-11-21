@@ -6,7 +6,7 @@ add_action( 'customize_register', function ( WP_Customize_Manager $c ) {
 	$c->add_section( 'hitscam', array( 'title' => __( 'HitsCam সেটিংস', 'hitscam' ), 'priority' => 30 ) );
 	$fields = array(
 		'phone'      => array( 'ফোন', '+880 1614-747054', 'sanitize_text_field' ),
-		'whatsapp'   => array( 'WhatsApp নম্বর (দেশ কোডসহ, + ছাড়া)', '8801614747054', 'sanitize_text_field' ),
+		'whatsapp'   => array( 'WhatsApp নম্বর (দেশ কোডসহ, + ছাড়া)', '8801953073445', 'sanitize_text_field' ),
 		'email'      => array( 'সাপোর্ট ইমেইল', 'support@hitscam.com', 'sanitize_email' ),
 		'topbar'     => array( 'টপবার বার্তা', '', 'sanitize_text_field' ),
 		'freeship'   => array( 'ফ্রি ডেলিভারির ন্যূনতম অর্ডার (৳)', 5000, 'absint' ),

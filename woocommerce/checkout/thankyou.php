@@ -27,7 +27,7 @@ $cur = 1;
 if ( $reconf || 'processing' === $status && $order->get_meta( '_hc_reconfirmed' ) ) { $cur = 2; }
 if ( in_array( $status, array( 'shipped', 'out-for-delivery' ), true ) ) { $cur = 3; }
 if ( 'completed' === $status ) { $cur = 4; }
-$tel = '+' . preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801614747054' ) );
+$tel = '+' . preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801953073445' ) );
 $sub = (float) $order->get_subtotal();
 $disc = (float) $order->get_discount_total();
 $ship = (float) $order->get_shipping_total();
@@ -85,7 +85,7 @@ $earn  = (int) $order->get_meta( '_hc_points_earn' );
 
 	<div class="panel mb-3">
 		<h5 class="fw-bold">📍 অর্ডার ট্র্যাকিং</h5>
-		<p>বর্তমান স্ট্যাটাস: <span class="status-pill" id="statusPill"><?php echo esc_html( $reconf && 'processing' === $status ? 'Confirmed' : wc_get_order_status_name( $status ) ); ?></span></p>
+		<p>বর্তমান স্ট্যাটাস: <span class="status-pill" id="statusPill"><?php echo esc_html( wc_get_order_status_name( $status ) ); ?></span></p>
 		<?php $n = count( $steps ); $k = (int) ceil( $n / 2 ); ?>
 		<ul class="timeline u-timeline mt-3" style="--k:<?php echo (int) $k; ?>;--n:<?php echo (int) $n; ?>">
 			<?php foreach ( $steps as $i => $s ) : $cls = $i < $cur ? 'done' : ( $i === $cur ? 'current' : '' ); $col = $i < $k ? 1 : 2; $row = $i < $k ? $i + 1 : ( 2 * $k - $i ); ?>

@@ -5,6 +5,18 @@
 2. বান্ডেল প্লাগিন কপি+অ্যাক্টিভেট: hitscam-tracking, hitscam-seo, hitscam-api।
 3. স্টোর সেটআপ (একবার): BDT/বাংলাদেশ, COD, ক্লাসিক কার্ট/চেকআউট, পেজ (ট্র্যাক, কম্পেয়ার, FAQ, কন্টাক্ট, উইশলিস্ট), মেনু, শিপিং জোন।
 
+## v2.8.0
+- **WhatsApp Business (+8801953073445)**: ডিফল্ট শপ নাম্বার সর্বত্র বদল (পুরনো ডিফল্ট থাকলে একবার অটো-মাইগ্রেট)। নতুন পেজ HitsCam → WhatsApp Business: Phone Number ID, Access Token, OTP টেমপ্লেট, ওয়েবহুক URL/Verify Token।
+- Cloud API যুক্ত হলে OTP ও অর্ডার আপডেট সরাসরি WhatsApp-এ যায়; ইনবাউন্ড ওয়েবহুকে গ্রাহক "verify" লিখলে কোড, "অর্ডার #N রিকনফার্ম" লিখলে অর্ডার রিকনফার্ম (ফোন মিললে)।
+
+## v2.7.0
+- **অর্ডার স্ট্যাটাস** (HitsCam → অর্ডার স্ট্যাটাস): একাধিক কাস্টম স্ট্যাটাস (`স্লাগ|লেবেল|রং`), রিকনফার্মে কোন স্ট্যাটাস বসবে এবং কোন কোন স্ট্যাটাসে নোটিফিকেশন যাবে — সবই অ্যাডমিন থেকে।
+- **গেটওয়ে ম্যানেজার** (HitsCam → গেটওয়ে): কোড ছাড়া একাধিক SMS/WhatsApp Cloud/IMO/ওয়েবহুক গেটওয়ে (URL, হেডার, বডি টেমপ্লেট, প্রিসেট, টেস্ট-সেন্ড)। `চ্যানেল কী=sms` হলে SMS গেটওয়ে; অন্য কী হলে ওই চ্যানেলে সরাসরি পাঠায়।
+- নতুন চ্যানেল (Telegram, Messenger…) যোগ: "চ্যানেল ও ভেরিফিকেশন" পেজে লাইন যোগ + গেটওয়ে পেজে একই কী দিয়ে গেটওয়ে।
+
+## v2.6.0
+- অর্ডার রিকনফার্ম করলে স্ট্যাটাস স্বয়ংক্রিয়ভাবে **Ready to ship** (`wc-ready-to-ship`, নতুন কাস্টম স্ট্যাটাস) হয়; অর্ডার নোট ও নোটিফিকেশন সহ।
+
 ## প্লাগিন
 - **HitsCam Tracking** (মেনু: HitsCam Tracking): Meta Settings / Google Tags / GTM / Filter & Hook List / Logs / HELP। Meta Pixel + Conversions API (event_id ডিডুপ, হ্যাশড PII), GA4/Ads, GTM dataLayer, কনসেন্ট, রোল-এক্সক্লুশন।
 - **HitsCam SEO** (মেনু: HitsCam SEO): মেটাবক্স+কনটেন্ট অ্যানালাইসিস, টাইটেল ভেরিয়েবল, OG/X/Dublin Core, JSON-LD+Knowledge Graph+Local Business, ব্রেডক্রাম্ব, সাইটম্যাপ (পোস্ট/প্রোডাক্ট/ট্যাক্সো/News/Video/RSS), IndexNow+Google Indexing, 404+রিডাইরেক্ট, robots/.htaccess এডিটর, Yoast/RankMath/SEOPress/AIOSEO ইমপোর্ট, PageSpeed, Search Console স্ট্যাটস, AI টাইটেল, ওয়াইজার্ড।

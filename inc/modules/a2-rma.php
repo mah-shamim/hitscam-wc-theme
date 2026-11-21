@@ -42,7 +42,7 @@ add_action( 'init', function () {
 add_shortcode( 'hitscam_rma', function () {
 	$orders = array();
 	if ( is_user_logged_in() && function_exists( 'wc_get_orders' ) ) {
-		foreach ( wc_get_orders( array( 'customer_id' => get_current_user_id(), 'limit' => 20, 'status' => array( 'processing', 'completed', 'on-hold' ) ) ) as $o ) {
+		foreach ( wc_get_orders( array( 'customer_id' => get_current_user_id(), 'limit' => 20, 'status' => array( 'processing', 'ready-to-ship', 'completed', 'on-hold' ) ) ) as $o ) {
 			$items = array();
 			foreach ( $o->get_items() as $it ) { $items[] = $it->get_name(); }
 			$orders[] = array( 'id' => $o->get_id(), 'label' => '#' . $o->get_order_number() . ' · ' . wc_format_datetime( $o->get_date_created() ) . ' · ' . wp_strip_all_tags( $o->get_formatted_order_total() ), 'items' => $items, 'phone' => $o->get_billing_phone() );

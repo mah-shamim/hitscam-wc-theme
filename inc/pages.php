@@ -240,7 +240,7 @@ function hitscam_ajax_warranty() {
 		$end = ( clone $start )->modify( "+$m months" ); $left = (int) floor( ( $end->getTimestamp() - time() ) / DAY_IN_SECONDS );
 		$rows[] = array( 'name' => $it->get_name(), 'months' => $m, 'end' => wp_date( 'd M Y', $end->getTimestamp() ), 'active' => $left >= 0, 'left' => max( 0, $left ) );
 	}
-	wp_send_json_success( array( 'rows' => $rows, 'wa' => preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801614747054' ) ) ) );
+	wp_send_json_success( array( 'rows' => $rows, 'wa' => preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801953073445' ) ) ) );
 }
 // পণ্যে ওয়ারেন্টি মাস (দ্রুত এডিট: জেনারেল ট্যাব)
 add_action( 'woocommerce_product_options_general_product_data', function () {

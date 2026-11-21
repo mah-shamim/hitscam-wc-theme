@@ -54,6 +54,6 @@ if ( WC()->cart->is_empty() ) : ?>
 	<div class="d-grid gap-2 mt-3">
 		<a class="btn btn-brand" href="<?php echo esc_url( wc_get_checkout_url() ); ?>">Proceed to Checkout</a>
 		<a class="btn btn-soft" href="<?php echo esc_url( wc_get_cart_url() ); ?>">কার্ট দেখুন</a>
-		<a class="btn btn-wa-outline" target="_blank" rel="noopener" href="https://wa.me/<?php echo esc_attr( preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801614747054' ) ) ); ?>?text=<?php echo rawurlencode( $msg ); ?>"><i class="bi bi-whatsapp"></i> WhatsApp এ কার্টের অর্ডার করুন</a>
+		<a class="btn btn-wa-outline" target="_blank" rel="noopener" href="https://wa.me/<?php echo esc_attr( preg_replace( '/\D/', '', hitscam_opt( 'whatsapp', '8801953073445' ) ) ); ?>?text=<?php echo rawurlencode( $msg ); ?>"><i class="bi bi-whatsapp"></i> WhatsApp এ কার্টের অর্ডার করুন</a>
 	</div>
 <?php endif; ?>

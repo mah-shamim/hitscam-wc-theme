@@ -37,7 +37,7 @@ function hitscam_e4_ajax_addon() {
 	$o = hitscam_order_from_post();
 	$p = wc_get_product( absint( $_POST['pid'] ?? 0 ) );
 	$left = ( $o->get_date_created()->getTimestamp() + hitscam_a2_window() * 60 ) - time();
-	if ( ! $p || ! $p->is_in_stock() || ! $p->is_type( 'simple' ) || $left <= 0 || ! $o->has_status( array( 'pending', 'processing', 'on-hold' ) ) ) {
+	if ( ! $p || ! $p->is_in_stock() || ! $p->is_type( 'simple' ) || $left <= 0 || ! $o->has_status( array( 'pending', 'processing', 'ready-to-ship', 'on-hold' ) ) ) {
 		wp_send_json_error( array( 'msg' => 'এখন অর্ডারে যোগ করা যাচ্ছে না।' ) );
 	}
 	$o->add_product( $p, 1 );

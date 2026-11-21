@@ -247,16 +247,25 @@ function hitscam_order_from_post() {
 }
 add_action( 'wp_ajax_hc_reconfirm', 'hitscam_ajax_reconfirm' );
 add_action( 'wp_ajax_nopriv_hc_reconfirm', 'hitscam_ajax_reconfirm' );
+/** অর্ডার রিকনফার্ম (AJAX ও WhatsApp ইনবাউন্ড — দুই জায়গা থেকেই) */
+function hitscam_do_reconfirm( WC_Order $o, $src = 'অর্ডার রিসিভড পেজ' ) {
+	if ( $o->get_meta( '_hc_reconfirmed' ) ) { return false; }
+	$o->update_meta_data( '_hc_reconfirmed', time() );
+	$o->save();
+	$tgt = function_exists( 'hitscam_reconfirm_status' ) ? hitscam_reconfirm_status() : '';
+	if ( $tgt && $tgt !== $o->get_status() && $o->has_status( array_merge( array( 'pending', 'on-hold', 'processing' ), function_exists( 'hitscam_custom_statuses' ) ? array_keys( hitscam_custom_statuses() ) : array() ) ) ) {
+		$o->update_status( $tgt, 'গ্রাহক অর্ডার রিকনফার্ম করেছেন (' . $src . ') — স্ট্যাটাস: ' . wc_get_order_status_name( $tgt ) . '।' );
+	} else {
+		$o->add_order_note( 'গ্রাহক অর্ডার রিকনফার্ম করেছেন (' . $src . ')।' );
+	}
+	do_action( 'hitscam_order_reconfirmed', $o );
+	hitscam_try_sms( $o->get_billing_phone(), 'HitsCam: ধন্যবাদ! আপনার অর্ডার #' . $o->get_order_number() . ' রিকনফার্ম হয়েছে। শীঘ্রই প্যাকেজিং শুরু হবে।' );
+	return true;
+}
 function hitscam_ajax_reconfirm() {
 	$o = hitscam_order_from_post();
-	if ( ! $o->get_meta( '_hc_reconfirmed' ) ) {
-		$o->update_meta_data( '_hc_reconfirmed', time() );
-		$o->add_order_note( 'গ্রাহক অর্ডার রিকনফার্ম করেছেন (অর্ডার রিসিভড পেজ থেকে)।' );
-		$o->save();
-		do_action( 'hitscam_order_reconfirmed', $o );
-		hitscam_try_sms( $o->get_billing_phone(), 'HitsCam: ধন্যবাদ! আপনার অর্ডার #' . $o->get_order_number() . ' রিকনফার্ম হয়েছে। শীঘ্রই প্যাকেজিং শুরু হবে।' );
-	}
-	wp_send_json_success();
+	hitscam_do_reconfirm( $o );
+	wp_send_json_success( array( 'status' => wc_get_order_status_name( $o->get_status() ) ) );
 }
 add_action( 'wp_ajax_hc_resend_sms', 'hitscam_ajax_resend_sms' );
 add_action( 'wp_ajax_nopriv_hc_resend_sms', 'hitscam_ajax_resend_sms' );

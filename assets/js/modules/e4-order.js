@@ -16,8 +16,8 @@ jQuery(function ($) {
   const bubble = (txt) => $('#smsThread').append($('<div class="sms-bubble"></div>').append($('<div></div>').text(txt), $('<div class="sms-meta"></div>').text('প্রাপক: ' + $or.data('phone') + ' · ' + clock())));
   const isSms = +$or.data('sms') === 1;
   bubble($or.data('msg'));
-  const markDone = () => {
-    $('#statusPill').text('Confirmed'); $('#alertTitle').text('অর্ডার রিকনফার্ম হয়েছে ✓');
+  const markDone = (st) => {
+    if (st) $('#statusPill').text(st); $('#alertTitle').text('অর্ডার রিকনফার্ম হয়েছে ✓');
     $('.timeline li').eq(1).removeClass('current').addClass('done').find('.tl-dot').html('<i class="bi bi-check-lg"></i>');
     $('.timeline li').eq(2).addClass('current');
     $('#reconfirmBtn').prop('disabled', true).removeClass('btn-brand').addClass('btn-success').html('<i class="bi bi-check-circle-fill"></i> রিকনফার্ম করা হয়েছে');
@@ -26,7 +26,7 @@ jQuery(function ($) {
   $('#reconfirmBtn').on('click', function () {
     if ($(this).prop('disabled')) return;
     post('hc_reconfirm').done(r => {
-      if (r.success) { markDone(); if (isSms) bubble($or.data('msgdone')); toast('অর্ডার রিকনফার্ম হয়েছে ✓' + (isSms ? ' — SMS পাঠানো হয়েছে' : '')); }
+      if (r.success) { markDone(r.data && r.data.status); if (isSms) bubble($or.data('msgdone')); toast('অর্ডার রিকনফার্ম হয়েছে ✓' + (isSms ? ' — SMS পাঠানো হয়েছে' : '')); }
       else toast((r.data && r.data.msg) || 'আবার চেষ্টা করুন');
     });
   });

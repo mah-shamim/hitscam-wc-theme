@@ -40,7 +40,7 @@ function hitscam_points_add( $uid, $n, $why = '' ) {
 	$log = (array) get_user_meta( $uid, 'hc_points_log', true ); $log[] = array( time(), (int) $n, $why ); update_user_meta( $uid, 'hc_points_log', array_slice( $log, -50 ) );
 }
 function hitscam_has_orders( $uid ) {
-	return $uid && (bool) wc_get_orders( array( 'customer_id' => $uid, 'limit' => 1, 'status' => array( 'processing', 'completed', 'on-hold' ), 'return' => 'ids' ) );
+	return $uid && (bool) wc_get_orders( array( 'customer_id' => $uid, 'limit' => 1, 'status' => array( 'processing', 'ready-to-ship', 'completed', 'on-hold' ), 'return' => 'ids' ) );
 }
 
 /* ---------- সেশন নির্বাচন ---------- */
@@ -168,7 +168,7 @@ add_action( 'woocommerce_checkout_process', function () {
 	$s = hitscam_svc_get();
 	if ( $s['ref'] ) {
 		$ph = hitscam_normalize_bd_phone( wp_unslash( $_POST['billing_phone'] ?? '' ) ); // phpcs:ignore
-		if ( $ph && wc_get_orders( array( 'billing_phone' => $ph, 'limit' => 1, 'return' => 'ids', 'status' => array( 'processing', 'completed', 'on-hold' ) ) ) ) {
+		if ( $ph && wc_get_orders( array( 'billing_phone' => $ph, 'limit' => 1, 'return' => 'ids', 'status' => array( 'processing', 'ready-to-ship', 'completed', 'on-hold' ) ) ) ) {
 			wc_add_notice( 'রেফারেল ছাড় শুধু প্রথম অর্ডারে — এই ফোনে আগে অর্ডার আছে। কার্টে কোডটি সরিয়ে আবার চেষ্টা করুন।', 'error' );
 		}
 	}

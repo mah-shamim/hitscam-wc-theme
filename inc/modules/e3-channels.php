@@ -21,7 +21,7 @@ function hitscam_channels( $use = '' ) {
 	foreach ( hitscam_e0_lines( 'hitscam_channels', HITSCAM_CH_DEFAULT ) as $r ) {
 		if ( count( $r ) < 4 || '' === $r[0] ) { continue; }
 		$num  = $r[4] ?? '';
-		$num  = '{wa}' === $num || '' === $num ? hitscam_opt( 'whatsapp', '8801614747054' ) : $num;
+		$num  = '{wa}' === $num || '' === $num ? hitscam_opt( 'whatsapp', '8801953073445' ) : $num;
 		$uses = array_map( 'trim', explode( ',', $r[5] ?? 'verify,reconfirm,notify' ) );
 		$out[ $r[0] ] = array( 'key' => $r[0], 'label' => $r[1], 'icon' => $r[2] ?: 'bi-chat-dots', 'url' => $r[3], 'num' => preg_match( '/^[\d+ -]+$/', $num ) ? preg_replace( '/\D/', '', $num ) : $num, 'uses' => $uses );
 	}
@@ -202,7 +202,7 @@ add_action( 'wp_ajax_nopriv_hc_notify_ch', 'hitscam_e3_ajax_notify' );
 
 /** অর্ডারের স্ট্যাটাস বদলালে: SMS গেটওয়ে থাকলে সরাসরি; না থাকলে অ্যাডমিন নোটে চ্যানেল-লিংক (ডেলিভারি টিম এক ক্লিকে পাঠাবে) */
 add_action( 'woocommerce_order_status_changed', function ( $id, $from, $to, $o ) {
-	if ( ! in_array( $to, array( 'processing', 'shipped', 'out-for-delivery', 'completed' ), true ) || ! $o->get_meta( '_hc_notify_ch' ) ) { return; }
+	if ( ! in_array( $to, hitscam_notify_statuses(), true ) || ! $o->get_meta( '_hc_notify_ch' ) || ( $GLOBALS['hc_notified'] ?? 0 ) === $id ) { return; }
 	$msg = 'HitsCam: আপনার অর্ডার #' . $o->get_order_number() . ' এখন "' . wc_get_order_status_name( $to ) . '"।';
 	if ( hitscam_try_sms( $o->get_billing_phone(), $msg ) ) { return; }
 	$cs = hitscam_channels(); $c = $cs[ $o->get_meta( '_hc_notify_ch' ) ] ?? null; $np = hitscam_normalize_bd_phone( $o->get_billing_phone() );

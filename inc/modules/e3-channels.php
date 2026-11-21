@@ -72,7 +72,7 @@ function hitscam_e3_admin() {
 		update_option( 'hitscam_verify_hard', empty( $_POST['verify_hard'] ) ? 0 : 1 );
 		echo '<div class="notice notice-success"><p>সেভ হয়েছে।</p></div>';
 	}
-	$mode = get_option( 'hitscam_chan_mode', 'auto' ); $ver = get_option( 'hitscam_verify', 'optional' );
+	$mode = get_option( 'hitscam_chan_mode', 'auto' ); $ver = get_option( 'hitscam_verify', 'required' );
 	$hook = rest_url( 'hitscam/v1/' );
 	echo '<div class="wrap"><h1>চ্যানেল ও ভেরিফিকেশন</h1><form method="post">'; wp_nonce_field( 'hc_e3' );
 	echo '<p><b>SMS গেটওয়ে:</b> ' . ( hitscam_sms_ready() ? '<span style="color:#1a7f37">যুক্ত আছে (hitscam_send_sms ফিল্টার)</span>' : '<span style="color:#b32d2e">যুক্ত নেই — নিচের চ্যানেলগুলো ব্যবহার হবে</span>' ) . '</p>';
@@ -126,7 +126,7 @@ add_action( 'rest_api_init', function () {
 
 /* ================= ফোন ভেরিফাই ================= */
 function hitscam_verified_via( $phone ) { $p = hitscam_normalize_bd_phone( $phone ); return $p ? (string) get_transient( 'hc_vf_' . md5( $p ) ) : ''; }
-function hitscam_verify_mode() { return get_option( 'hitscam_verify', 'optional' ); }
+function hitscam_verify_mode() { return get_option( 'hitscam_verify', 'required' ); }
 
 function hitscam_e3_ajax_vsend() {
 	check_ajax_referer( 'hitscam', 'nonce' );

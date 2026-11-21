@@ -53,3 +53,29 @@ jQuery(function ($) {
     });
   });
 });
+
+/* ইনভয়েস সরাসরি PDF ডাউনলোড (html2canvas + jsPDF — বাংলা ফন্টসহ হুবহু) */
+jQuery(function ($) {
+  const $or = $('.order-received[data-pdf]'); if (!$or.length) return;
+  const load = (src) => new Promise((res, rej) => { if (document.querySelector('script[data-src="' + src + '"]')) return res(); const s = document.createElement('script'); s.src = src; s.dataset.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  $(document).on('click', '#pdfBtn', async function () {
+    const $b = $(this).prop('disabled', true), old = $b.html(); $b.html('<span class="spinner-border spinner-border-sm"></span> তৈরি হচ্ছে…');
+    try {
+      const base = $or.data('pdf'); await load(base + 'html2canvas.min.js'); await load(base + 'jspdf.umd.min.js');
+      const id = $.trim($or.find('.or-stat b').first().text()).replace('#', '');
+      const $w = $('<div id="hcInvoice" style="position:fixed;left:-9999px;top:0;width:794px;background:#fff;color:#111;padding:32px;font-family:inherit"></div>');
+      $w.append('<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #e03131;padding-bottom:12px;margin-bottom:16px"><div><div style="font-size:26px;font-weight:800">' + (document.title.split('–')[0] || 'HitsCam') + ' – ইনভয়েস</div><div style="color:#555">অর্ডার #' + id + ' · ' + $or.find('.or-stat b').eq(1).text() + '</div></div><div style="text-align:right;color:#555">' + $or.find('.print-only small').text() + '</div></div>');
+      $w.append($or.find('.panel:has(.totals-row)').first().clone().css({ boxShadow: 'none', border: '1px solid #ddd' }).find('.no-print,button,#addonOffer,.border-dashed').remove().end());
+      $w.append($or.find('.row.g-3.mb-4 .col-md-6').first().find('.panel').clone().css({ boxShadow: 'none', border: '1px solid #ddd', marginTop: '16px' }));
+      $('body').append($w);
+      const canvas = await html2canvas($w[0], { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+      const { jsPDF } = window.jspdf, pdf = new jsPDF('p', 'pt', 'a4'), W = pdf.internal.pageSize.getWidth(), H = pdf.internal.pageSize.getHeight();
+      const ih = canvas.height * W / canvas.width; let y = 0;
+      const img = canvas.toDataURL('image/jpeg', 0.92);
+      pdf.addImage(img, 'JPEG', 0, 0, W, ih);
+      while (ih - (y += H) > 0) { pdf.addPage(); pdf.addImage(img, 'JPEG', 0, -y, W, ih); }
+      pdf.save('invoice-' + id + '.pdf'); $w.remove();
+    } catch (e) { window.print(); }
+    $b.prop('disabled', false).html(old);
+  });
+});

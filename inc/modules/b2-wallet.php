@@ -38,6 +38,9 @@ function hitscam_wallet_items() {
 	return $out;
 }
 function hitscam_wallet_html() {
+	if ( ! is_user_logged_in() && ! get_option( 'hitscam_coupon_guest', 0 ) ) {
+		return '<div class="wallet" id="couponWallet"><div class="small"><i class="bi bi-ticket-perforated text-brand"></i> কুপন ব্যবহার করতে <a class="text-brand fw-semibold" href="' . esc_url( wc_get_page_permalink( 'myaccount' ) ) . '">লগইন / রেজিস্টার করুন</a>।</div></div>';
+	}
 	if ( ! WC()->cart || WC()->cart->is_empty() ) { return ''; }
 	$items = hitscam_wallet_items(); if ( ! $items ) { return ''; }
 	$best = null; foreach ( $items as $i ) { if ( $i['s'] > 0 && ( ! $best || $i['s'] > $best ) ) { $best = $i['s']; $bc = $i['code']; } }

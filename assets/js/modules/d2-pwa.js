@@ -49,7 +49,7 @@ jQuery(function ($) {
     return 'granted';
   }
   const $or = $('.order-received');
-  if ($or.length && 'Notification' in window && !$('#notifBox').length) {
+  if ($or.length && +$or.data('nb') !== 0 && 'Notification' in window && !$('#notifBox').length) {
     const st = S.get('hc_notif'), on = st && st.state === 'on' && Notification.permission === 'granted';
     $or.find('.row.g-2.mb-5').first().before(`<div class="notif-box no-print" id="notifBox"><div><b><i class="bi bi-bell-fill text-brand"></i> অর্ডারের আপডেট নোটিফিকেশনে পান</b><div class="small text-muted" id="notifTxt">${on ? 'চালু আছে ✓' : 'কনফার্ম, কুরিয়ারে পাঠানো ও ডেলিভারির খবর এই ডিভাইসে জানানো হবে।'}</div></div><button type="button" class="btn btn-sm ${on ? 'btn-soft' : 'btn-brand'}" id="notifBtn" ${on ? 'disabled' : ''}>${on ? 'চালু আছে' : 'চালু করুন'}</button></div>`);
   }

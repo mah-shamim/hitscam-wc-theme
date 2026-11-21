@@ -75,6 +75,7 @@ function hitscam_d2_coview() {
 	$price = (float) $p->get_price() ?: 1; $score = array();
 	$cands = wc_get_products( array( 'limit' => 40, 'status' => 'publish', 'exclude' => array( $cur ), 'return' => 'objects' ) );
 	foreach ( $cands as $c ) {
+		if ( ! $c->is_visible() ) { continue; }
 		$s = ( in_array( $c->get_id(), $near, true ) ? 10 : 0 ) + ( array_intersect( $c->get_category_ids(), $p->get_category_ids() ) ? 3 : 0 ) + max( 0, 2 - abs( log( max( 1, (float) $c->get_price() ) / $price ) ) ) + (float) $c->get_average_rating() / 10;
 		$score[ $c->get_id() ] = $s;
 	}

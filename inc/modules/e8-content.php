@@ -155,11 +155,7 @@ function hitscam_seed_demo( $force = false ) {
 		if ( 'external' === $x['type'] ) { $p->set_product_url( $x['url'] ); $p->set_button_text( $x['btn'] ); }
 		if ( in_array( $x['type'], array( 'simple', 'variable' ), true ) ) { $p->set_manage_stock( true ); $p->set_stock_quantity( (int) ( $x['stock'] ?? 20 ) ); }
 		if ( in_array( 'trending', $x['tags'] ?? array(), true ) || in_array( 'best', $x['tags'] ?? array(), true ) ) { $p->set_featured( true ); }
-		// ইনফো আইকন-লাইন → ভিজিবল অ্যাট্রিবিউট
 		$attrs = array(); $pos = 0;
-		foreach ( $x['info'] ?? array() as $i => $inf ) {
-			$a = new WC_Product_Attribute(); $a->set_name( $inf[1] ? 'ফিচার ' . ( $i + 1 ) : 'ফিচার' ); $a->set_options( array( $inf[1] ) ); $a->set_visible( true ); $a->set_variation( false ); $a->set_position( $pos++ ); $attrs[] = $a;
-		}
 		if ( 'variable' === $x['type'] ) {
 			foreach ( $x['attributes'] as $at ) {
 				$vals = array_map( fn( $v ) => is_array( $v ) ? $v['v'] : $v, $at['values'] );
@@ -173,6 +169,7 @@ function hitscam_seed_demo( $force = false ) {
 		$map[ $did ] = $pid; $made++;
 		update_post_meta( $pid, 'total_sales', (int) ( $x['sold'] ?? 0 ) );
 		update_post_meta( $pid, '_hc_demo', $did );
+		if ( ! empty( $x['info'] ) ) { update_post_meta( $pid, '_hc_specs', implode( "\n", array_column( $x['info'], 1 ) ) ); }
 		foreach ( (array) ( $x['fit'] ?? array() ) as $k => $v ) { update_post_meta( $pid, '_hc_fit_' . $k, implode( ',', $v ) ); }
 		if ( 'variable' === $x['type'] ) {
 			foreach ( $x['variations'] as $v ) {

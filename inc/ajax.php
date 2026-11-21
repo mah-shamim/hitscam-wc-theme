@@ -168,10 +168,6 @@ function hitscam_ajax_compare() {
 	}
 	echo '</tr></thead><tbody>';
 	echo $row( 'দাম', fn( $p ) => wp_kses_post( $p->get_price_html() ) ); // phpcs:ignore
-	echo $row( 'রেটিং', fn( $p ) => $p->get_average_rating() ? esc_html( hitscam_bn_digits( $p->get_average_rating() ) ) . ' (' . esc_html( hitscam_bn_digits( $p->get_review_count() ) ) . ')' : '—' ); // phpcs:ignore
-	echo $row( 'স্টক', fn( $p ) => $p->is_in_stock() ? 'আছে' : 'শেষ' ); // phpcs:ignore
-	echo $row( 'SKU', fn( $p ) => esc_html( $p->get_sku() ?: '—' ) ); // phpcs:ignore
-	echo $row( 'ক্যাটেগরি', fn( $p ) => wp_kses_post( wc_get_product_category_list( $p->get_id() ) ?: '—' ) ); // phpcs:ignore
 	foreach ( array_keys( $attrs ) as $label ) {
 		echo $row( $label, function ( $p ) use ( $label ) { // phpcs:ignore
 			foreach ( $p->get_attributes() as $a ) {
@@ -183,6 +179,11 @@ function hitscam_ajax_compare() {
 			return '—';
 		} );
 	}
+	echo $row( 'Specifications / ফিচার', function ( $p ) { $s = function_exists( 'hitscam_specs' ) ? hitscam_specs( $p->get_id() ) : array(); return $s ? '<ul class="spec-list mb-0"><li>' . implode( '</li><li>', array_map( 'esc_html', array_slice( $s, 0, 8 ) ) ) . '</li></ul>' : '—'; } ); // phpcs:ignore
+	echo $row( 'রেটিং', fn( $p ) => $p->get_average_rating() ? esc_html( hitscam_bn_digits( $p->get_average_rating() ) ) . ' (' . esc_html( hitscam_bn_digits( $p->get_review_count() ) ) . ')' : '—' ); // phpcs:ignore
+	echo $row( 'স্টক', fn( $p ) => $p->is_in_stock() ? 'আছে' : 'শেষ' ); // phpcs:ignore
+	echo $row( 'SKU', fn( $p ) => esc_html( $p->get_sku() ?: '—' ) ); // phpcs:ignore
+	echo $row( 'ক্যাটেগরি', fn( $p ) => wp_kses_post( wc_get_product_category_list( $p->get_id() ) ?: '—' ) ); // phpcs:ignore
 	echo '<tr><th></th>';
 	foreach ( $ps as $p ) {
 		echo '<td><a class="btn btn-brand btn-sm" href="' . esc_url( $p->add_to_cart_url() ) . '">' . esc_html( $p->add_to_cart_text() ) . '</a></td>';

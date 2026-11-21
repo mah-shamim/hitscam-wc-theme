@@ -147,7 +147,8 @@ while ( have_posts() ) :
 			if ( $product->get_weight() ) { $rows[] = array( 'ওজন', $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit' ) ); }
 			if ( $product->has_dimensions() ) { $rows[] = array( 'মাপ', wc_format_dimensions( $product->get_dimensions( false ) ) ); }
 			if ( $rows ) : ?><table class="table table-sm mb-0"><tbody><?php foreach ( $rows as $r ) : ?><tr><th style="width:40%"><?php echo esc_html( $r[0] ); ?></th><td><?php echo esc_html( $r[1] ); ?></td></tr><?php endforeach; ?></tbody></table>
-			<?php else : ?><p class="text-muted mb-0">স্পেসিফিকেশন যোগ করা হয়নি (প্রোডাক্ট এডিটে Attributes ট্যাব)।</p><?php endif; ?>
+			<?php elseif ( ! function_exists( 'hitscam_specs' ) || ! hitscam_specs( $pid ) ) : ?><p class="text-muted mb-0">স্পেসিফিকেশন যোগ করা হয়নি (প্রোডাক্ট এডিটে Attributes ট্যাব)।</p><?php endif; ?>
+			<?php if ( function_exists( 'hitscam_specs_html' ) ) { echo hitscam_specs_html( $pid ); } // phpcs:ignore ?>
 		</div></div>
 	</div>
 

@@ -74,9 +74,11 @@ jQuery(function ($) {
   if ($or.length && $('#hcSelfMount').length) {
     districts = $('#hcSelfMount').data('districts') || {};
     ctx = { oid: $or.data('order'), key: $or.data('key') };
+    if (+$or.data('mg') !== 0) {
     const $m = $('<div class="panel my-3" id="selfServ" style="display:none"></div>').insertBefore($or.find('.row.g-3.mb-4').first());
     call('hc_track', {}).done(r => { if (r.success) drawMgr(r.data); });
+    }
     const pid = +$('#hcSelfMount').data('pid');   // পোস্ট-অর্ডার আপসেল: মানানসই পণ্য
-    if (pid) $.post(HCT.ajax, { action: 'hc_coview', nonce: HCT.nonce, id: pid, near: [] }).done(r => { if (r.success && r.data && !$('#postUpsell').length) $or.find('.row.g-2.mb-5').first().before('<section class="panel mb-3 no-print" id="postUpsell"><h5 class="fw-bold mb-3"><i class="bi bi-plus-circle text-brand"></i> আপনার অর্ডারের সাথে মানানসই — মেমোরি কার্ড ও অ্যাক্সেসরিজ</h5>' + r.data + '</section>'); });
+    if (pid && +$or.data('cr') !== 0) $.post(HCT.ajax, { action: 'hc_coview', nonce: HCT.nonce, id: pid, near: [] }).done(r => { if (r.success && r.data && !$('#postUpsell').length) $or.find('.row.g-2.mb-5').first().before('<section class="panel mb-3 no-print" id="postUpsell"><h5 class="fw-bold mb-3"><i class="bi bi-plus-circle text-brand"></i> আপনার অর্ডারের সাথে মানানসই — মেমোরি কার্ড ও অ্যাক্সেসরিজ</h5>' + r.data + '</section>'); });
   }
 });

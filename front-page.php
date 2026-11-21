@@ -46,6 +46,7 @@ if ( $cats && ! is_wp_error( $cats ) ) : ?>
 <?php endif;
 
 hitscam_place( 'home' );
+do_action( 'hitscam_after_home' );
 ?>
 <?php endif; ?>
 

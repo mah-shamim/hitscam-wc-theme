@@ -34,7 +34,7 @@ function hitscam_card_info( WC_Product $p, $max = 4 ) {
 			break;
 		}
 	}
-	return $out;
+	return apply_filters( 'hitscam_card_info_fallback', $out, $p );
 }
 
 /** ভ্যারিয়েবল প্রোডাক্টের ভ্যারিয়েশন তালিকা (কার্ড/PDP উভয়ের জন্য) */

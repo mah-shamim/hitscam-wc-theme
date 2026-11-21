@@ -30,3 +30,13 @@ jQuery(function ($) {
   });
   mount(); $(document.body).on('updated_checkout', mount);
 });
+
+/* সাবস্ক্রাইব ফর্ম (হোম) */
+jQuery(function ($) {
+  $(document).on('submit', '#nlForm', function (e) {
+    e.preventDefault(); const $f = $(this), $m = $('#nlMsg');
+    $.post(HCT.ajax, { action: 'hc_subscribe', nonce: HCT.nonce, contact: $f.find('[name=contact]').val(), website: $f.find('[name=website]').val() }).done(r => {
+      if (r.success) { $m.removeClass('text-danger').addClass('text-success').text((r.data && r.data.msg) || 'ধন্যবাদ!'); $f[0].reset(); } else { $m.removeClass('text-success').addClass('text-danger').text((r.data && r.data.msg) || 'আবার চেষ্টা করুন'); }
+    });
+  });
+});

@@ -23,7 +23,7 @@ if ( $product->is_on_sale() && $product->is_type( 'variable' ) ) {
 	}
 }
 $cats = wc_get_product_category_list( $id, ', ', '', '' );
-$sold = (int) $product->get_total_sales();
+$sold = function_exists( 'hitscam_sold_count' ) ? hitscam_sold_count( $product->get_id() ) : (int) $product->get_total_sales();
 $can_ajax = $product->is_type( 'simple' ) && $product->is_purchasable() && $product->is_in_stock();
 ?>
 <?php

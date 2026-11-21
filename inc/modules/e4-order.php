@@ -18,7 +18,7 @@ function hitscam_e4_addon_product( WC_Order $o ) {
 	$cands = array_merge( $cands, wc_get_products( array( 'limit' => 12, 'status' => 'publish', 'return' => 'ids', 'orderby' => 'popularity' ) ) );
 	foreach ( array_unique( $cands ) as $id ) {
 		$p = wc_get_product( $id );
-		if ( $p && ! in_array( $id, $in, true ) && $p->is_type( 'simple' ) && $p->is_in_stock() && $p->is_purchasable() && (float) $p->get_price() > 0 ) { return $p; }
+		if ( $p && $p->is_visible() && ! in_array( $id, $in, true ) && $p->is_type( 'simple' ) && $p->is_in_stock() && $p->is_purchasable() && (float) $p->get_price() > 0 ) { return $p; }
 	}
 	return null;
 }
@@ -78,4 +78,4 @@ add_filter( 'woocommerce_billing_fields', function ( $f ) {
 	if ( isset( $f['billing_phone'] ) ) { $f['billing_phone']['required'] = true; $f['billing_phone']['label'] = 'মোবাইল নাম্বার'; $f['billing_phone']['priority'] = 25; }
 	return $f;
 }, 99 );
-add_action( 'wp_head', function () { echo '<script>window.HC_VERIFY=' . wp_json_encode( get_option( 'hitscam_verify', 'optional' ) ) . ';</script>'; }, 1 );
+add_action( 'wp_head', function () { echo '<script>window.HC_VERIFY=' . wp_json_encode( get_option( 'hitscam_verify', 'required' ) ) . ';</script>'; }, 1 );

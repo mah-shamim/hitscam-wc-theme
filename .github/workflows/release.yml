@@ -32,7 +32,7 @@ jobs:
         run: |
           VER=${{ steps.v.outputs.version }}
           mkdir -p dist build/hitscam
-          rsync -a --exclude '.git' --exclude '.github' --exclude 'dist' --exclude 'build' --exclude 'bundled-plugins/*/.git' ./ build/hitscam/
+          rsync -a --exclude '/wp' --exclude '.git' --exclude '.github' --exclude 'dist' --exclude 'build' --exclude 'bundled-plugins/*/.git' ./ build/hitscam/
           (cd build && zip -qr ../dist/hitscam-wc-theme-v$VER.zip hitscam)
           for p in bundled-plugins/*/; do n=$(basename "$p"); (cd bundled-plugins && zip -qr ../dist/$n-v$VER.zip "$n"); done
           (cd dist && sha256sum *.zip > SHA256SUMS.txt && ls -l)

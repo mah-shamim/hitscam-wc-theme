@@ -72,7 +72,7 @@ jobs:
       - name: Install theme + bundled plugins
         run: |
           cd wp
-          rsync -a --exclude '.git' --exclude '.github' --exclude 'bundled-plugins' ../ wp-content/themes/hitscam/
+          rsync -a --exclude '/wp' --exclude '.git' --exclude '.github' --exclude 'bundled-plugins' ../ wp-content/themes/hitscam/
           for p in ../bundled-plugins/*/; do rsync -a "$p" wp-content/plugins/$(basename "$p")/; done
           wp theme activate hitscam
           wp plugin activate $(ls wp-content/plugins | grep '^hitscam-' | tr '\n' ' ')

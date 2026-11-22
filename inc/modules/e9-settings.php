@@ -85,6 +85,8 @@ function hitscam_e9_pay_admin() {
 	}
 	$cfg = (array) get_option( 'hitscam_pay_cfg', array() );
 	echo '<div class="wrap"><h1>পেমেন্ট মেথড (থিম-স্তরের কাস্টমাইজেশন)</h1><p>চেকআউটে কোন মেথড দেখাবে, নাম, বর্ণনা, আইকন (bootstrap-icons ক্লাস যেমন <code>bi-cash</code>) ও ক্রম। টিক না দিলে চেকআউটে লুকানো থাকবে (WooCommerce সেটিংস অপরিবর্তিত)।</p><form method="post">'; wp_nonce_field( 'hc_pm' );
+	$on_ids = array_keys( array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) );
+	if ( $cfg && ( ! $on_ids || ( array( 'cod' ) === $on_ids ) ) ) { echo '<div class="notice notice-warning inline"><p><b>সতর্কতা:</b> শুধু সাধারণ "Cash on delivery" চালু আছে। বড় অঙ্কের অর্ডারে (HitsCam → পেমেন্ট গার্ডের সীমার উপরে) সাধারণ COD বন্ধ থাকে — তখন চেকআউটে কোনো পেমেন্ট মেথড দেখাবে না। অগ্রিমসহ COD / বিকাশ / নগদ / অনলাইন থেকে অন্তত একটি চালু রাখুন।</p></div>'; }
 	echo '<table class="widefat striped"><thead><tr><th>দেখান</th><th>মেথড</th><th>টাইটেল</th><th>বর্ণনা</th><th>আইকন</th><th>ক্রম</th></tr></thead><tbody>';
 	$i = 0;
 	foreach ( $gws as $id => $g ) {
@@ -106,10 +108,11 @@ add_filter( 'woocommerce_available_payment_gateways', function ( $gws ) {
 		if ( '' !== $c['desc'] ) { $g->description = $c['desc']; }
 		if ( '' !== $c['icon'] ) { $g->icon = ''; $g->hc_icon = $c['icon']; }
 	}
-	if ( ! $gws ) { return $orig; } // সব বন্ধ হয়ে গেলে ফলব্যাক: WooCommerce-এর তালিকা
+	if ( ! $gws && ! array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) ) { return $orig; } // কনফিগে একটাও চালু না থাকলে (ভুল সেটিং) ফলব্যাক; নইলে অ্যাডমিনের সিদ্ধান্তই মানা হবে
 	uasort( $gws, function ( $a, $b ) use ( $cfg ) { return (int) ( $cfg[ $a->id ]['order'] ?? 999 ) <=> (int) ( $cfg[ $b->id ]['order'] ?? 999 ); } );
 	return $gws;
 }, 99 );
+add_filter( 'woocommerce_no_available_payment_methods_message', function ( $m ) { return 'এই অর্ডারের জন্য এখন কোনো পেমেন্ট মেথড চালু নেই। অনুগ্রহ করে আমাদের সাথে যোগাযোগ করুন।'; } );
 add_filter( 'woocommerce_gateway_icon', function ( $icon, $id ) {
 	$cfg = (array) get_option( 'hitscam_pay_cfg', array() );
 	return ! empty( $cfg[ $id ]['icon'] ) ? '<i class="bi ' . esc_attr( $cfg[ $id ]['icon'] ) . ' text-brand ms-1"></i>' : $icon;

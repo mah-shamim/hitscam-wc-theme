@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HITSCAM_VERSION', '2.9.3' );
+define( 'HITSCAM_VERSION', '2.9.4' );
 define( 'HITSCAM_DIR', get_template_directory() );
 define( 'HITSCAM_URI', get_template_directory_uri() );
 

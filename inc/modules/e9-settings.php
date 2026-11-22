@@ -71,6 +71,9 @@ function hitscam_e9_ty_admin() {
 	echo '</table><p><button class="button button-primary" name="hc_ty" value="1">সেভ</button></p></form><p>চ্যানেল তালিকা বদলাতে: HitsCam → মেসেজিং চ্যানেল।</p></div>';
 }
 
+/** কোনো মেথড সিলেক্ট না থাকলে যেটা চালু থাকবে: cod (সাধারণ COD) বা hc_codadv (COD + অগ্রিম) */
+function hitscam_pay_fallback() { return 'hc_codadv' === get_option( 'hitscam_pay_fallback', 'cod' ) ? 'hc_codadv' : 'cod'; }
+
 /* ---------- পেমেন্ট মেথড: চালু/বন্ধ + টাইটেল/বর্ণনা/আইকন/ক্রম ---------- */
 function hitscam_e9_pay_admin() {
 	$gws = WC()->payment_gateways()->payment_gateways();
@@ -80,7 +83,9 @@ function hitscam_e9_pay_admin() {
 			$r = $_POST['pm'][ $id ] ?? array(); // phpcs:ignore
 			$cfg[ $id ] = array( 'on' => empty( $r['on'] ) ? 0 : 1, 'title' => sanitize_text_field( wp_unslash( $r['title'] ?? '' ) ), 'desc' => sanitize_textarea_field( wp_unslash( $r['desc'] ?? '' ) ), 'icon' => sanitize_text_field( wp_unslash( $r['icon'] ?? '' ) ), 'order' => (int) ( $r['order'] ?? 0 ) );
 		}
-		if ( ! array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) && isset( $cfg['cod'] ) ) { $cfg['cod']['on'] = 1; } // কিছু সিলেক্ট না থাকলে cod সবসময় চালু
+		update_option( 'hitscam_pay_fallback', 'hc_codadv' === ( $_POST['fallback'] ?? '' ) ? 'hc_codadv' : 'cod' );
+		$fb = hitscam_pay_fallback();
+		if ( ! array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) && isset( $cfg[ $fb ] ) ) { $cfg[ $fb ]['on'] = 1; } // কিছু সিলেক্ট না থাকলে নির্বাচিত ডিফল্ট চালু
 		update_option( 'hitscam_pay_cfg', $cfg );
 		echo '<div class="notice notice-success"><p>সেভ হয়েছে।</p></div>';
 	}
@@ -99,6 +104,8 @@ function hitscam_e9_pay_admin() {
 	if ( $cfg && ( ! $on_ids || ( array( 'cod' ) === $on_ids ) ) ) { echo '<div class="notice notice-warning inline"><p><b>সতর্কতা:</b> শুধু সাধারণ "Cash on delivery" চালু আছে। বড় অঙ্কের অর্ডারে (HitsCam → পেমেন্ট গার্ডের সীমার উপরে) সাধারণ COD বন্ধ থাকে — তখন চেকআউটে কোনো পেমেন্ট মেথড দেখাবে না। অগ্রিমসহ COD / বিকাশ / নগদ / অনলাইন থেকে অন্তত একটি চালু রাখুন।</p></div>'; }
 	echo '</form><form method="post" style="background:#fff;border:1px solid #c3c4c7;padding:12px 16px;margin:0 0 16px;max-width:760px">'; wp_nonce_field( 'hc_pm' );
 	echo '<h2 style="margin-top:0">COD + অগ্রিম — অগ্রিমের পরিমাণ</h2><p><label>ধরন <select name="adv_mode"><option value="fixed"' . selected( $am, 'fixed', false ) . '>নির্দিষ্ট টাকা</option><option value="percent"' . selected( $am, 'percent', false ) . '>মোট বিলের শতকরা (%)</option></select></label> &nbsp; <label>টাকা ৳ <input type="number" name="advance" min="0" value="' . esc_attr( $adv['advance'] ?? 500 ) . '" style="width:90px"></label> &nbsp; <label>শতকরা % <input type="number" name="adv_pct" min="1" max="100" value="' . esc_attr( $adv['adv_pct'] ?? 10 ) . '" style="width:70px"></label> <button class="button button-primary" name="hc_adv" value="1">সেভ</button></p><p class="description">টাইটেল ফাঁকা রাখলে এই পরিমাণ নিজে থেকে টাইটেলে বসে। অগ্রিম কখনো মোট বিলের বেশি হবে না। (WooCommerce → Settings → Payments-এও একই সেটিং আছে।)</p></form><form method="post">'; wp_nonce_field( 'hc_pm' );
+	$fbv = hitscam_pay_fallback();
+	echo '<p style="background:#fff;border:1px solid #c3c4c7;padding:10px 14px;max-width:760px"><b>কোনো মেথড সিলেক্ট না থাকলে সবসময় চালু থাকবে:</b><br><label><input type="radio" name="fallback" value="cod"' . checked( $fbv, 'cod', false ) . '> সাধারণ Cash on delivery (<code>cod</code>)</label><br><label><input type="radio" name="fallback" value="hc_codadv"' . checked( $fbv, 'hc_codadv', false ) . '> ক্যাশ অন ডেলিভারি — অগ্রিমসহ (<code>hc_codadv</code>, অগ্রিমের শর্ত প্রযোজ্য)</label></p>';
 	echo '<table class="widefat striped"><thead><tr><th>দেখান</th><th>মেথড</th><th>টাইটেল</th><th>বর্ণনা</th><th>আইকন</th><th>ক্রম</th></tr></thead><tbody>';
 	$i = 0;
 	foreach ( $gws as $id => $g ) {
@@ -121,8 +128,8 @@ add_filter( 'woocommerce_available_payment_gateways', function ( $gws ) {
 		if ( '' !== $c['icon'] ) { $g->icon = ''; $g->hc_icon = $c['icon']; }
 	}
 	if ( ! array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) ) { // কিছুই সিলেক্ট না থাকলে সবসময় Cash on delivery (cod)
-		$all = WC()->payment_gateways()->payment_gateways();
-		return isset( $all['cod'] ) ? array( 'cod' => $all['cod'] ) : $orig;
+		$all = WC()->payment_gateways()->payment_gateways(); $fb = hitscam_pay_fallback();
+		return isset( $all[ $fb ] ) ? array( $fb => $all[ $fb ] ) : $orig;
 	} // নইলে অ্যাডমিনের সিদ্ধান্তই মানা হবে
 	uasort( $gws, function ( $a, $b ) use ( $cfg ) { return (int) ( $cfg[ $a->id ]['order'] ?? 999 ) <=> (int) ( $cfg[ $b->id ]['order'] ?? 999 ); } );
 	return $gws;

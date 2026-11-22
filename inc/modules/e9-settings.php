@@ -80,6 +80,7 @@ function hitscam_e9_pay_admin() {
 			$r = $_POST['pm'][ $id ] ?? array(); // phpcs:ignore
 			$cfg[ $id ] = array( 'on' => empty( $r['on'] ) ? 0 : 1, 'title' => sanitize_text_field( wp_unslash( $r['title'] ?? '' ) ), 'desc' => sanitize_textarea_field( wp_unslash( $r['desc'] ?? '' ) ), 'icon' => sanitize_text_field( wp_unslash( $r['icon'] ?? '' ) ), 'order' => (int) ( $r['order'] ?? 0 ) );
 		}
+		if ( ! array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) && isset( $cfg['cod'] ) ) { $cfg['cod']['on'] = 1; } // কিছু সিলেক্ট না থাকলে cod সবসময় চালু
 		update_option( 'hitscam_pay_cfg', $cfg );
 		echo '<div class="notice notice-success"><p>সেভ হয়েছে।</p></div>';
 	}
@@ -119,7 +120,10 @@ add_filter( 'woocommerce_available_payment_gateways', function ( $gws ) {
 		if ( '' !== $c['desc'] ) { $g->description = $c['desc']; }
 		if ( '' !== $c['icon'] ) { $g->icon = ''; $g->hc_icon = $c['icon']; }
 	}
-	if ( ! $gws && ! array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) ) { return $orig; } // কনফিগে একটাও চালু না থাকলে (ভুল সেটিং) ফলব্যাক; নইলে অ্যাডমিনের সিদ্ধান্তই মানা হবে
+	if ( ! array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) ) { // কিছুই সিলেক্ট না থাকলে সবসময় Cash on delivery (cod)
+		$all = WC()->payment_gateways()->payment_gateways();
+		return isset( $all['cod'] ) ? array( 'cod' => $all['cod'] ) : $orig;
+	} // নইলে অ্যাডমিনের সিদ্ধান্তই মানা হবে
 	uasort( $gws, function ( $a, $b ) use ( $cfg ) { return (int) ( $cfg[ $a->id ]['order'] ?? 999 ) <=> (int) ( $cfg[ $b->id ]['order'] ?? 999 ); } );
 	return $gws;
 }, 99 );

@@ -108,10 +108,18 @@ function hitscam_a2_define_gateways() {
 		public function init_form_fields() {
 			parent::init_form_fields();
 			unset( $this->form_fields['number'] );
-			$this->form_fields['advance'] = array( 'title' => 'অগ্রিমের পরিমাণ (৳)', 'type' => 'number', 'default' => '500' );
+			$this->form_fields['adv_mode'] = array( 'title' => 'অগ্রিমের ধরন', 'type' => 'select', 'default' => 'fixed', 'options' => array( 'fixed' => 'নির্দিষ্ট টাকা', 'percent' => 'মোট বিলের শতকরা (%)' ) );
+			$this->form_fields['advance']  = array( 'title' => 'অগ্রিমের পরিমাণ (৳)', 'type' => 'number', 'default' => '500' );
+			$this->form_fields['adv_pct']  = array( 'title' => 'অগ্রিম (%)', 'type' => 'number', 'default' => '10', 'custom_attributes' => array( 'min' => 1, 'max' => 100, 'step' => 1 ) );
 		}
-		public function adv( $total ) { return min( (float) $this->get_option( 'advance', 500 ), (float) $total ); }
-		public function get_title() { $a = (float) $this->get_option( 'advance', 500 ); return 'ক্যাশ অন ডেলিভারি — অগ্রিম ৳' . hitscam_bn_digits( $a ) . ' বিকাশ/নগদে, বাকিটা ডেলিভারিতে'; }
+		public function adv( $total ) {
+			$a = 'percent' === $this->get_option( 'adv_mode', 'fixed' ) ? round( (float) $total * (float) $this->get_option( 'adv_pct', 10 ) / 100 ) : (float) $this->get_option( 'advance', 500 );
+			return min( $a, (float) $total );
+		}
+		public function get_title() {
+			if ( 'percent' === $this->get_option( 'adv_mode', 'fixed' ) ) { return 'ক্যাশ অন ডেলিভারি — অগ্রিম ' . hitscam_bn_digits( (float) $this->get_option( 'adv_pct', 10 ) ) . '% বিকাশ/নগদে, বাকিটা ডেলিভারিতে'; }
+			return 'ক্যাশ অন ডেলিভারি — অগ্রিম ৳' . hitscam_bn_digits( (float) $this->get_option( 'advance', 500 ) ) . ' বিকাশ/নগদে, বাকিটা ডেলিভারিতে';
+		}
 		public function payment_fields() {
 			$t = WC()->cart ? (float) WC()->cart->get_total( 'edit' ) : 0; $a = $this->adv( $t );
 			echo '<div class="mb-2" data-adv-method><span class="small me-2">অগ্রিম পাঠাবেন:</span><label class="me-3"><input type="radio" class="form-check-input" name="hc_advm" value="বিকাশ" checked> বিকাশ</label><label><input type="radio" class="form-check-input" name="hc_advm" value="নগদ"> নগদ</label></div>';

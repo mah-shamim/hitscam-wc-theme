@@ -83,10 +83,21 @@ function hitscam_e9_pay_admin() {
 		update_option( 'hitscam_pay_cfg', $cfg );
 		echo '<div class="notice notice-success"><p>সেভ হয়েছে।</p></div>';
 	}
+	if ( isset( $_POST['hc_adv'] ) && check_admin_referer( 'hc_pm' ) ) {
+		$s = (array) get_option( 'woocommerce_hc_codadv_settings', array() );
+		$s['adv_mode'] = 'percent' === ( $_POST['adv_mode'] ?? '' ) ? 'percent' : 'fixed';
+		$s['advance']  = (string) max( 0, (float) ( $_POST['advance'] ?? 500 ) );
+		$s['adv_pct']  = (string) min( 100, max( 1, (float) ( $_POST['adv_pct'] ?? 10 ) ) );
+		update_option( 'woocommerce_hc_codadv_settings', $s );
+		echo '<div class="notice notice-success"><p>অগ্রিমের সেটিং সেভ হয়েছে।</p></div>';
+	}
+	$adv = (array) get_option( 'woocommerce_hc_codadv_settings', array() ); $am = $adv['adv_mode'] ?? 'fixed';
 	$cfg = (array) get_option( 'hitscam_pay_cfg', array() );
 	echo '<div class="wrap"><h1>পেমেন্ট মেথড (থিম-স্তরের কাস্টমাইজেশন)</h1><p>চেকআউটে কোন মেথড দেখাবে, নাম, বর্ণনা, আইকন (bootstrap-icons ক্লাস যেমন <code>bi-cash</code>) ও ক্রম। টিক না দিলে চেকআউটে লুকানো থাকবে (WooCommerce সেটিংস অপরিবর্তিত)।</p><form method="post">'; wp_nonce_field( 'hc_pm' );
 	$on_ids = array_keys( array_filter( $cfg, fn( $c ) => ! empty( $c['on'] ) ) );
 	if ( $cfg && ( ! $on_ids || ( array( 'cod' ) === $on_ids ) ) ) { echo '<div class="notice notice-warning inline"><p><b>সতর্কতা:</b> শুধু সাধারণ "Cash on delivery" চালু আছে। বড় অঙ্কের অর্ডারে (HitsCam → পেমেন্ট গার্ডের সীমার উপরে) সাধারণ COD বন্ধ থাকে — তখন চেকআউটে কোনো পেমেন্ট মেথড দেখাবে না। অগ্রিমসহ COD / বিকাশ / নগদ / অনলাইন থেকে অন্তত একটি চালু রাখুন।</p></div>'; }
+	echo '</form><form method="post" style="background:#fff;border:1px solid #c3c4c7;padding:12px 16px;margin:0 0 16px;max-width:760px">'; wp_nonce_field( 'hc_pm' );
+	echo '<h2 style="margin-top:0">COD + অগ্রিম — অগ্রিমের পরিমাণ</h2><p><label>ধরন <select name="adv_mode"><option value="fixed"' . selected( $am, 'fixed', false ) . '>নির্দিষ্ট টাকা</option><option value="percent"' . selected( $am, 'percent', false ) . '>মোট বিলের শতকরা (%)</option></select></label> &nbsp; <label>টাকা ৳ <input type="number" name="advance" min="0" value="' . esc_attr( $adv['advance'] ?? 500 ) . '" style="width:90px"></label> &nbsp; <label>শতকরা % <input type="number" name="adv_pct" min="1" max="100" value="' . esc_attr( $adv['adv_pct'] ?? 10 ) . '" style="width:70px"></label> <button class="button button-primary" name="hc_adv" value="1">সেভ</button></p><p class="description">টাইটেল ফাঁকা রাখলে এই পরিমাণ নিজে থেকে টাইটেলে বসে। অগ্রিম কখনো মোট বিলের বেশি হবে না। (WooCommerce → Settings → Payments-এও একই সেটিং আছে।)</p></form><form method="post">'; wp_nonce_field( 'hc_pm' );
 	echo '<table class="widefat striped"><thead><tr><th>দেখান</th><th>মেথড</th><th>টাইটেল</th><th>বর্ণনা</th><th>আইকন</th><th>ক্রম</th></tr></thead><tbody>';
 	$i = 0;
 	foreach ( $gws as $id => $g ) {

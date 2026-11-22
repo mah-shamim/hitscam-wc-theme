@@ -29,10 +29,12 @@ $wc = hitscam_is_wc();
 	</div>
 </section>
 
+<?php $hc_strip = function_exists( 'hitscam_home_strip' ) ? hitscam_home_strip() : array(); if ( $hc_strip ) : ?>
 <section class="container section pb-0"><div class="row g-3 trust-row">
-	<?php foreach ( array( array( 'bi-truck', 'সারাদেশে ডেলিভারি', 'দ্রুত ও নিরাপদ' ), array( 'bi-shield-check', 'অরিজিনাল পণ্য', 'ওয়ারেন্টিসহ' ), array( 'bi-cash-coin', 'ক্যাশ অন ডেলিভারি', 'হাতে পেয়ে পেমেন্ট' ), array( 'bi-arrow-repeat', '৭ দিনে রিটার্ন', 'ঝামেলাহীন' ) ) as $t ) : ?>
+	<?php foreach ( $hc_strip as $t ) : ?>
 	<div class="col-6 col-md-3"><div class="t-item"><i class="bi <?php echo esc_attr( $t[0] ); ?>"></i><div><b><?php echo esc_html( $t[1] ); ?></b><small><?php echo esc_html( $t[2] ); ?></small></div></div></div>
 	<?php endforeach; ?></div></section>
+<?php endif; ?>
 
 <?php
 $cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => true, 'parent' => 0, 'exclude' => array( (int) get_option( 'default_product_cat' ) ), 'number' => 8 ) );

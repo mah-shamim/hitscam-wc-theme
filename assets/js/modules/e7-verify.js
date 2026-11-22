@@ -17,7 +17,17 @@ jQuery(function ($) {
     build(); $('#vfPh').text(phone()); $('#vfCodeBox,#vfManual').hide(); $('#vfInfo,#vfErr').text(''); $('#vfCode').val('');
     const chans = window.HC_VCH || [];
     $('#vfBtns').html(chans.map(c => '<button type="button" class="btn btn-soft btn-lg rounded-pill vf-ch" data-ch="' + c.key + '"><i class="bi ' + c.icon + '"></i> ' + c.label + '</button>').join(''));
+    place();
     modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('vfModal')); modal.show();
+    $('#vfModal').off('shown.bs.modal.hc').on('shown.bs.modal.hc', place);
+  };
+  /* ইন্সট্যান্ট অর্ডার মডালের iframe-এ: পপআপ যেন অভিভাবক মডালের এখন-দেখা অংশের ভেতরে আসে (স্ক্রল করা থাকলেও) */
+  const place = () => {
+    try {
+      if (window.parent === window || !/hc_modal/.test(location.search)) return;
+      const root = window.parent.document.getElementById('orderRoot'); if (!root) return;
+      $('#vfModal .modal-dialog').removeClass('modal-dialog-centered').css('margin-top', (root.scrollTop + Math.max(16, root.clientHeight / 2 - 170)) + 'px');
+    } catch (e) {}
   };
 
   /* প্লেস অর্ডার আটকানো: ভেরিফাইড না হলে পপআপ */

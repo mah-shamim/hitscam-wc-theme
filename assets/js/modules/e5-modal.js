@@ -9,7 +9,7 @@
     frame = document.getElementById('orderFrame');
     frame.addEventListener('load', function () {
       $('#orderLoad').hide(); $(frame).show();
-      const fit = () => { try { const d = frame.contentDocument; if (d && d.body) frame.style.height = Math.max(d.documentElement.scrollHeight, 480) + 'px'; } catch (e) {} };
+      const fit = () => { try { const d = frame.contentDocument; if (d && d.body) frame.style.height = Math.max(Math.ceil(d.body.getBoundingClientRect().height) + 8, 480) + 'px'; } catch (e) {} };
       fit(); clearInterval(frame._t); frame._t = setInterval(fit, 600);
       try { if (/order-received/.test(frame.contentWindow.location.href)) { $('#orderModal .modal-title').html('<i class="bi bi-check-circle-fill text-success"></i> অর্ডার সম্পন্ন'); if (window.HCT_cartRefresh) HCT_cartRefresh(); } } catch (e) {}
     });
